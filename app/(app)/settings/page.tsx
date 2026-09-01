@@ -20,28 +20,34 @@ export default function SettingsPage() {
 
     setPushStatus('loading')
 
-    const permission = await Notification.requestPermission()
-    if (permission !== 'granted') {
-      setPushStatus('denied')
-      return
+    try {
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted') {
+        setPushStatus('denied')
+        return
+      }
+
+      const keyRes = await fetch('/api/push/vapid-key')
+      const { publicKey } = await keyRes.json()
+
+      const reg = await navigator.serviceWorker.ready
+      const subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey).buffer as ArrayBuffer,
+      })
+
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subscription.toJSON()),
+      })
+
+      setPushStatus('ok')
+    } catch (err) {
+      console.error('Push subscribe error:', err)
+      setPushStatus('idle')
+      alert('No se pudieron activar las notificaciones. Inténtalo de nuevo.')
     }
-
-    const keyRes = await fetch('/api/push/vapid-key')
-    const { publicKey } = await keyRes.json()
-
-    const reg = await navigator.serviceWorker.ready
-    const subscription = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(publicKey).buffer as ArrayBuffer,
-    })
-
-    await fetch('/api/push/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(subscription.toJSON()),
-    })
-
-    setPushStatus('ok')
   }
 
   const sectionStyle: React.CSSProperties = {
