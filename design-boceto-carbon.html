@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eat&Fit — Boceto Carbon</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #0C0C0C;
+    --surface:  #141414;
+    --surface2: #1A1A1A;
+    --border:   #1E1E1E;
+    --border2:  #2A2A2A;
+    --muted:    #3A3A3A;
+    --dim:      #666666;
+    --text:     #FFFFFF;
+    --accent:   #FF6B00;
+    --fit:      #00D46A;
+    --fat:      #FF3B3B;
+    --gold:     #FFB800;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #060606;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px;
+    gap: 40px;
+  }
+
+  /* PAGE TITLE */
+  .page-title {
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    width: 100%;
+    max-width: 1100px;
+  }
+  .page-title h1 {
+    font-size: 11px; font-weight: 700; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .page-title p { font-size: 12px; color: var(--dim); }
+
+  /* LEGEND */
+  .legend {
+    display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
+    font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; }
+
+  /* PHONES ROW */
+  .phones-row {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    width: 100%; max-width: 1100px;
+  }
+
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone-label {
+    font-size: 9px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 3px; font-weight: 700;
+  }
+
+  /* PHONE */
+  .phone {
+    width: 300px; height: 620px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
+    flex-shrink: 0;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .topbar-title {
+    font-size: 11px; font-weight: 900; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--text);
+  }
+  .avatar {
+    width: 26px; height: 26px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 900; color: #fff;
+  }
+  .nav-chevrons { display: flex; gap: 0; }
+  .chev {
+    width: 22px; height: 22px; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* SCROLL AREA */
+  .scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
+  .scroll-area::-webkit-scrollbar { width: 2px; }
+  .scroll-area::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    display: flex; border-top: 1px solid var(--border);
+    background: var(--bg); flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1; padding: 10px 0;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+  }
+  .nav-icon {
+    width: 20px; height: 1.5px; background: var(--muted);
+  }
+  .nav-icon.active { background: var(--accent); }
+  .nav-icon.stats { clip-path: polygon(0 100%, 33% 50%, 66% 70%, 100% 0, 100% 100%); height: 12px; background: var(--muted); }
+  .nav-icon.stats.active { background: var(--accent); }
+  .nav-icon.gear {
+    width: 14px; height: 14px; background: transparent;
+    border: 1.5px solid var(--muted); border-radius: 50%;
+    position: relative;
+  }
+  .nav-icon.gear.active { border-color: var(--accent); }
+  .nav-label {
+    font-size: 7px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+  }
+  .nav-label.active { color: var(--accent); }
+
+  /* ==================== CALENDAR ==================== */
+  .cal-wrapper { padding: 0 10px 10px; flex: 1; display: flex; flex-direction: column; }
+
+  /* Partner toggle */
+  .partner-toggle {
+    display: flex; margin: 10px 0 12px;
+    border: 1px solid var(--border2); overflow: hidden;
+  }
+  .partner-btn {
+    flex: 1; padding: 7px; text-align: center;
+    font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); background: var(--surface);
+    border: none; cursor: pointer; font-family: inherit;
+  }
+  .partner-btn.active { background: var(--accent); color: #fff; }
+
+  /* Weekday headers */
+  .cal-header {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 2px; margin-bottom: 2px;
+  }
+  .cal-wd {
+    text-align: center; font-size: 7px; font-weight: 700;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1px; padding: 4px 0;
+  }
+
+  /* Week rows */
+  .cal-weeks-container { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .cal-week {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 2px; flex: 1;
+    position: relative;
+  }
+  .cal-week.golden {
+    outline: 1.5px solid var(--gold);
+    outline-offset: 1px;
+  }
+
+  /* Day cell */
+  .cal-day {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; background: var(--surface); position: relative;
+    cursor: pointer; min-height: 44px;
+  }
+  .cal-day.empty { background: var(--bg); cursor: default; }
+  .cal-day.today { outline: 1.5px solid var(--accent); }
+  .cal-day.future { background: var(--surface); opacity: 0.4; }
+
+  .day-num {
+    font-size: 9px; font-weight: 700;
+    color: var(--dim); line-height: 1;
+  }
+  .cal-day.today .day-num { color: var(--accent); }
+  .cal-day.has-data .day-num { color: var(--text); }
+
+  .day-pips { display: flex; gap: 1.5px; align-items: center; }
+  .pip { width: 3.5px; height: 3.5px; }
+  .pip.fit   { background: var(--fit); }
+  .pip.fat   { background: var(--fat); }
+  .pip.sport { background: var(--accent); }
+
+
+  /* ==================== STATS ==================== */
+  .stats-content { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  .stats-partner-toggle {
+    display: flex; border: 1px solid var(--border2);
+  }
+  .stats-partner-btn {
+    flex: 1; padding: 8px; text-align: center;
+    font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted); background: var(--surface);
+    border: none; font-family: inherit;
+  }
+  .stats-partner-btn.active { background: var(--accent); color: #fff; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat-card {
+    background: var(--surface); padding: 12px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .stat-card.full { grid-column: span 2; }
+  .stat-label {
+    font-size: 7px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--muted);
+  }
+  .stat-value { font-size: 24px; font-weight: 900; color: var(--text); line-height: 1; }
+  .stat-value.fit-color { color: var(--fit); }
+  .stat-value.fat-color { color: var(--fat); }
+  .stat-value.gold-color { color: var(--gold); }
+  .stat-value.accent-color { color: var(--accent); }
+  .stat-sub { font-size: 8px; color: var(--muted); }
+
+  /* Progress bar */
+  .progress-track {
+    height: 3px; background: var(--border2); margin-top: 6px;
+  }
+  .progress-fill { height: 100%; }
+
+  /* Sport breakdown */
+  .sport-section { background: var(--surface); padding: 12px 10px; }
+  .sport-title {
+    font-size: 7px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--muted); margin-bottom: 10px;
+  }
+  .sport-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
+  }
+  .sport-name { font-size: 9px; font-weight: 700; color: var(--dim); width: 52px; flex-shrink: 0; }
+  .sport-bar-track { flex: 1; height: 3px; background: var(--border2); }
+  .sport-bar-fill { height: 100%; background: var(--accent); }
+  .sport-count { font-size: 9px; font-weight: 900; color: var(--text); width: 12px; text-align: right; }
+
+  /* Streak */
+  .streak-card {
+    background: var(--surface); padding: 12px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-left: 2px solid var(--accent);
+  }
+  .streak-left { display: flex; flex-direction: column; gap: 2px; }
+  .streak-value { font-size: 32px; font-weight: 900; color: var(--accent); line-height: 1; }
+  .streak-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+  .streak-right { font-size: 9px; color: var(--muted); text-align: right; line-height: 1.5; }
+
+  /* ==================== SETTINGS ==================== */
+  .settings-content { padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+
+  .settings-section-label {
+    font-size: 7px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--muted); padding: 12px 0 6px;
+  }
+
+  .settings-row {
+    background: var(--surface); padding: 14px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .settings-row:last-child { margin-bottom: 0; }
+  .settings-row-left { display: flex; flex-direction: column; gap: 2px; }
+  .settings-row-title { font-size: 11px; font-weight: 700; color: var(--text); }
+  .settings-row-sub { font-size: 9px; color: var(--muted); }
+
+  /* Toggle switch */
+  .toggle-switch {
+    width: 32px; height: 18px; background: var(--border2);
+    position: relative; cursor: pointer; flex-shrink: 0;
+  }
+  .toggle-switch.on { background: var(--accent); }
+  .toggle-knob {
+    position: absolute; top: 3px;
+    width: 12px; height: 12px; background: #fff;
+    transition: left 0.15s;
+  }
+  .toggle-switch .toggle-knob { left: 3px; }
+  .toggle-switch.on .toggle-knob { left: 17px; }
+
+  .settings-danger {
+    background: transparent; padding: 14px 12px;
+    border: 1px solid #2A1010; margin-top: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .settings-danger-title { font-size: 11px; font-weight: 700; color: var(--fat); }
+  .settings-danger-arrow { font-size: 11px; color: var(--fat); }
+
+  .user-card {
+    background: var(--surface); padding: 14px 12px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 2px;
+    border-left: 2px solid var(--accent);
+  }
+  .user-avatar-lg {
+    width: 36px; height: 36px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0;
+  }
+  .user-info { display: flex; flex-direction: column; gap: 2px; }
+  .user-name { font-size: 12px; font-weight: 900; color: var(--text); }
+  .user-role { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* PIN Screen */
+  .pin-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 28px; padding: 0;
+  }
+  .pin-logo { font-size: 28px; font-weight: 900; letter-spacing: -2px; color: var(--text); }
+  .pin-logo span { color: var(--accent); }
+  .pin-sub { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 3px; }
+  .pin-dots { display: flex; gap: 14px; }
+  .pin-dot { width: 10px; height: 10px; border: 1.5px solid var(--border2); }
+  .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .pin-numpad { width: 100%; display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: #000; }
+  .pin-key {
+    background: var(--surface); padding: 16px;
+    text-align: center; font-size: 20px; font-weight: 700; color: var(--text);
+    cursor: pointer;
+  }
+  .pin-key.del { font-size: 11px; font-weight: 600; color: var(--muted); background: var(--bg); letter-spacing: 1px; }
+  .pin-key.empty { background: var(--bg); }
+
+  /* GOLD BADGE */
+  .gold-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 7px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px;
+    border: 1px solid var(--gold); padding: 2px 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>Eat&Fit — Boceto Carbon</h1>
+  <p>Sin objetivos · Calendario alineado · Semana dorada: ≥5 Fit + ≥4 Deporte</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--fit)"></div>Comida Fit</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--fat)"></div>Comida Fat</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Deporte</div>
+  <div class="legend-item"><div class="legend-dot" style="background:transparent;border:1px solid var(--gold)"></div>Semana cumplida</div>
+</div>
+
+<div class="phones-row">
+
+  <!-- ========== PESTAÑA 1: ACCESO ========== -->
+  <div class="phone-wrap">
+    <div class="phone-label">Acceso (PIN)</div>
+    <div class="phone">
+      <div class="pin-screen">
+        <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div class="pin-logo">EAT<span>&amp;FIT</span></div>
+          <div class="pin-sub">Introduce tu PIN</div>
+        </div>
+        <div class="pin-dots">
+          <div class="pin-dot filled"></div>
+          <div class="pin-dot filled"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+        <div class="pin-numpad">
+          <div class="pin-key">1</div>
+          <div class="pin-key">2</div>
+          <div class="pin-key">3</div>
+          <div class="pin-key">4</div>
+          <div class="pin-key">5</div>
+          <div class="pin-key">6</div>
+          <div class="pin-key">7</div>
+          <div class="pin-key">8</div>
+          <div class="pin-key">9</div>
+          <div class="pin-key empty"></div>
+          <div class="pin-key">0</div>
+          <div class="pin-key del">DEL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PESTAÑA 2: INICIO / CALENDARIO ========== -->
+  <div class="phone-wrap">
+    <div class="phone-label">Inicio (Calendario)</div>
+    <div class="phone">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="nav-chevrons">
+            <div class="chev">‹</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="topbar-title">SEP 2026</div>
+        </div>
+        <div class="avatar">AG</div>
+      </div>
+
+      <div class="scroll-area">
+        <div class="cal-wrapper">
+
+          <!-- Partner toggle -->
+          <div class="partner-toggle">
+            <button class="partner-btn active">adriangomez</button>
+            <button class="partner-btn">mariamartinez</button>
+          </div>
+
+          <!-- Weekday headers -->
+          <div class="cal-header">
+            <div class="cal-wd">L</div>
+            <div class="cal-wd">M</div>
+            <div class="cal-wd">X</div>
+            <div class="cal-wd">J</div>
+            <div class="cal-wd">V</div>
+            <div class="cal-wd">S</div>
+            <div class="cal-wd">D</div>
+          </div>
+
+          <!-- Sep 2026 empieza en martes -->
+          <div class="cal-weeks-container">
+
+          <!-- Semana 1: 1-6 (L vacío) — 3 fit, 2 sport → no dorada -->
+          <div class="cal-week">
+            <div class="cal-day empty"></div>
+            <div class="cal-day has-data"><!-- Mar 1 -->
+              <div class="day-num">1</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data"><!-- Mié 2 -->
+              <div class="day-num">2</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data"><!-- Jue 3 -->
+              <div class="day-num">3</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day has-data"><!-- Vie 4 -->
+              <div class="day-num">4</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data"><!-- Sáb 5 -->
+              <div class="day-num">5</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data"><!-- Dom 6 -->
+              <div class="day-num">6</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+          </div>
+
+          <!-- Semana 2: 7-13 — 5 fit, 4 sport → DORADA -->
+          <div class="cal-week golden">
+            <div class="cal-day has-data">
+              <div class="day-num">7</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">8</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">9</div>
+              <div class="day-pips"><div class="pip fat"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">10</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">11</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">12</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">13</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+          </div>
+
+          <!-- Semana 3: 14-20 — 5 fit, 4 sport → DORADA -->
+          <div class="cal-week golden">
+            <div class="cal-day has-data">
+              <div class="day-num">14</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">15</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">16</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">17</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">18</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">19</div>
+              <div class="day-pips"><div class="pip fat"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">20</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+          </div>
+
+          <!-- Semana 4: 21-27 — 3 fit, 2 sport → no dorada -->
+          <div class="cal-week">
+            <div class="cal-day has-data">
+              <div class="day-num">21</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">22</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">23</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">24</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">25</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">26</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">27</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+          </div>
+
+          <!-- Semana 5: 28-30 + vacíos -->
+          <div class="cal-week">
+            <div class="cal-day has-data">
+              <div class="day-num">28</div>
+              <div class="day-pips"><div class="pip fit"></div><div class="pip sport"></div></div>
+            </div>
+            <div class="cal-day has-data">
+              <div class="day-num">29</div>
+              <div class="day-pips"><div class="pip fat"></div></div>
+            </div>
+            <div class="cal-day today">
+              <div class="day-num">30</div>
+              <div class="day-pips"><div class="pip fit"></div></div>
+            </div>
+            <div class="cal-day empty"></div>
+            <div class="cal-day empty"></div>
+            <div class="cal-day empty"></div>
+            <div class="cal-day empty"></div>
+          </div>
+
+          </div><!-- /cal-weeks-container -->
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon active"></div>
+          <div class="nav-label active">Inicio</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon stats"></div>
+          <div class="nav-label">Stats</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon gear"></div>
+          <div class="nav-label">Ajustes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: EDITAR DÍA ========== -->
+  <div class="phone-wrap">
+    <div class="phone-label">Modal — Editar día</div>
+    <div class="phone">
+      <!-- Fondo difuminado con el calendario detrás -->
+      <div style="flex:1;background:rgba(0,0,0,0.7);display:flex;flex-direction:column;">
+
+        <!-- Sheet -->
+        <div style="margin-top:90px;flex:1;background:var(--surface);border-top:2px solid var(--accent);padding:18px;display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Header -->
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:12px;">
+            <div>
+              <div style="font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--text)">Martes, 30 Sep</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px">Editar registro</div>
+            </div>
+            <div style="font-size:16px;color:var(--muted)">✕</div>
+          </div>
+
+          <!-- Comida -->
+          <div>
+            <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px">Comida</div>
+            <div style="display:flex;gap:2px;">
+              <div style="flex:1;padding:12px;text-align:center;font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:var(--fit);color:#fff;">FIT</div>
+              <div style="flex:1;padding:12px;text-align:center;font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:var(--bg);color:var(--muted);border:1px solid var(--border2);">FAT</div>
+            </div>
+          </div>
+
+          <!-- Deporte -->
+          <div>
+            <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px">Deporte</div>
+            <div style="display:flex;gap:2px;flex-wrap:wrap;">
+              <div style="padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:var(--bg);">Gym</div>
+              <div style="padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent);background:var(--bg);">Correr</div>
+              <div style="padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted);background:var(--bg);">Spinning</div>
+              <div style="padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted);background:var(--bg);">Padel</div>
+              <div style="padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted);background:var(--bg);">BodyPump</div>
+            </div>
+            <!-- KM input para Correr -->
+            <div style="margin-top:8px;display:flex;align-items:center;gap:8px;border:1px solid var(--border2);padding:8px 10px;background:var(--bg);">
+              <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Km recorridos</div>
+              <div style="flex:1;font-size:12px;font-weight:900;color:var(--text);text-align:right;">5.2</div>
+              <div style="font-size:8px;color:var(--muted)">km</div>
+            </div>
+          </div>
+
+          <!-- Save -->
+          <div style="margin-top:auto;padding:13px;background:var(--accent);text-align:center;font-size:10px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#fff;">
+            GUARDAR
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PESTAÑA 3: STATS ========== -->
+  <div class="phone-wrap">
+    <div class="phone-label">Stats</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="topbar-title">ESTADÍSTICAS</div>
+        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Sep 2026</div>
+      </div>
+
+      <div class="scroll-area">
+        <div class="stats-content">
+
+          <!-- Partner toggle -->
+          <div class="stats-partner-toggle">
+            <button class="stats-partner-btn active">adriangomez</button>
+            <button class="stats-partner-btn">mariamartinez</button>
+          </div>
+
+          <!-- Stat cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Días Fit</div>
+              <div class="stat-value fit-color">18</div>
+              <div class="progress-track"><div class="progress-fill" style="width:72%;background:var(--fit)"></div></div>
+              <div class="stat-sub">72% del mes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Días Fat</div>
+              <div class="stat-value fat-color">7</div>
+              <div class="progress-track"><div class="progress-fill" style="width:28%;background:var(--fat)"></div></div>
+              <div class="stat-sub">28% del mes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Días Deporte</div>
+              <div class="stat-value accent-color">16</div>
+              <div class="progress-track"><div class="progress-fill" style="width:64%;background:var(--accent)"></div></div>
+              <div class="stat-sub">64% del mes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Semanas</div>
+              <div class="stat-value gold-color">2</div>
+              <div style="margin-top:4px">
+                <div class="gold-badge">doradas</div>
+              </div>
+              <div class="stat-sub">de 4 semanas</div>
+            </div>
+          </div>
+
+          <!-- Streak -->
+          <div class="streak-card">
+            <div class="streak-left">
+              <div class="streak-label">Racha actual</div>
+              <div class="streak-value">6</div>
+              <div class="streak-label">días consecutivos fit</div>
+            </div>
+            <div class="streak-right">
+              Mejor racha<br>
+              <span style="font-size:14px;font-weight:900;color:var(--text)">11</span> días
+            </div>
+          </div>
+
+          <!-- Sport breakdown -->
+          <div class="sport-section">
+            <div class="sport-title">Desglose de deporte</div>
+            <div class="sport-row">
+              <div class="sport-name">Gym</div>
+              <div class="sport-bar-track"><div class="sport-bar-fill" style="width:100%"></div></div>
+              <div class="sport-count">8</div>
+            </div>
+            <div class="sport-row">
+              <div class="sport-name">Correr</div>
+              <div class="sport-bar-track"><div class="sport-bar-fill" style="width:50%"></div></div>
+              <div class="sport-count">4</div>
+            </div>
+            <div class="sport-row" style="align-items:flex-start">
+              <div class="sport-name" style="padding-top:2px">Correr km</div>
+              <div style="flex:1">
+                <div style="font-size:16px;font-weight:900;color:var(--accent);line-height:1">24.6</div>
+                <div style="font-size:8px;color:var(--muted)">km totales</div>
+              </div>
+            </div>
+            <div class="sport-row">
+              <div class="sport-name">Spinning</div>
+              <div class="sport-bar-track"><div class="sport-bar-fill" style="width:25%"></div></div>
+              <div class="sport-count">2</div>
+            </div>
+            <div class="sport-row">
+              <div class="sport-name">Padel</div>
+              <div class="sport-bar-track"><div class="sport-bar-fill" style="width:12.5%"></div></div>
+              <div class="sport-count">1</div>
+            </div>
+            <div class="sport-row">
+              <div class="sport-name">BodyPump</div>
+              <div class="sport-bar-track"><div class="sport-bar-fill" style="width:12.5%"></div></div>
+              <div class="sport-count">1</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <div class="nav-label">Inicio</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon stats active"></div>
+          <div class="nav-label active">Stats</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon gear"></div>
+          <div class="nav-label">Ajustes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PESTAÑA 4: AJUSTES ========== -->
+  <div class="phone-wrap">
+    <div class="phone-label">Ajustes</div>
+    <div class="phone">
+      <div class="topbar">
+        <div class="topbar-title">AJUSTES</div>
+      </div>
+
+      <div class="scroll-area">
+        <div class="settings-content">
+
+          <!-- Usuario activo -->
+          <div class="settings-section-label">Cuenta</div>
+          <div class="user-card">
+            <div class="user-avatar-lg">AG</div>
+            <div class="user-info">
+              <div class="user-name">adriangomez</div>
+              <div class="user-role">Sesión activa · PIN ****</div>
+            </div>
+          </div>
+
+          <!-- Notificaciones -->
+          <div class="settings-section-label">Notificaciones</div>
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-title">Recordatorio diario</div>
+              <div class="settings-row-sub">A las 21:00 si no has rellenado el día</div>
+            </div>
+            <div class="toggle-switch on">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+
+          <!-- App -->
+          <div class="settings-section-label">Aplicación</div>
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-title">Instalar app</div>
+              <div class="settings-row-sub">Añadir a pantalla de inicio</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-title">Versión</div>
+              <div class="settings-row-sub">1.0.0</div>
+            </div>
+            <div style="font-size:9px;color:var(--muted);font-family:monospace">v1.0.0</div>
+          </div>
+
+          <!-- Peligroso -->
+          <div class="settings-section-label">Sesión</div>
+          <div class="settings-danger">
+            <div class="settings-danger-title">Cerrar sesión</div>
+            <div class="settings-danger-arrow">›</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <div class="nav-label">Inicio</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon stats"></div>
+          <div class="nav-label">Stats</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon gear active"></div>
+          <div class="nav-label active">Ajustes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NOTA -->
+<div style="text-align:center;font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:20px;max-width:900px;line-height:1.8;">
+  <strong style="color:var(--accent)">Semana dorada</strong> = outline de 1.5px color <span style="color:var(--gold)">#FFB800</span> alrededor de la fila completa de lunes a domingo ·
+  Los días vacíos (sin datos) no tienen pips ·
+  El día actual lleva outline naranja ·
+  Los días fuera del mes aparecen en negro
+</div>
+
+</body>
+</html>

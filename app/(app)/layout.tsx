@@ -9,8 +9,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!session) redirect('/pin')
 
   return (
-    <div className="min-h-dvh flex flex-col bg-clay-bg">
-      <main className="flex-1 overflow-y-auto pb-20">{children}</main>
+    <div style={{ background: 'var(--c-bg)', minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: 48 }}>{children}</main>
       <BottomNav />
     </div>
   )

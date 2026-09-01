@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const DEPORTES = ['BodyPump', 'Spinning', 'Correr', 'Padel', 'Gym'] as const
 type Deporte = (typeof DEPORTES)[number]
@@ -13,7 +13,6 @@ interface DeporteEntry {
 interface RegistroData {
   comida: 'fit' | 'fat' | null
   gimnasio: boolean
-  objetivo: boolean
   deportes: { tipo: string; kms: number | null }[]
 }
 
@@ -32,14 +31,12 @@ function formatFecha(fecha: string) {
 
 export default function DayModal({ fecha, registro, readOnly, onClose, onSave }: DayModalProps) {
   const today = new Date().toISOString().split('T')[0]
-  const isFuture = fecha > today
   const isToday = fecha === today
 
   const [comida, setComida] = useState<'fit' | 'fat' | null>(registro?.comida ?? null)
   const [deportesSeleccionados, setDeportes] = useState<DeporteEntry[]>(
     (registro?.deportes ?? []).map((d) => ({ tipo: d.tipo as Deporte, kms: d.kms ?? undefined }))
   )
-  const [objetivo, setObjetivo] = useState(registro?.objetivo ?? false)
   const [saving, setSaving] = useState(false)
 
   const gimnasio = deportesSeleccionados.length > 0
@@ -65,7 +62,6 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
     await onSave(fecha, {
       comida,
       gimnasio,
-      objetivo,
       deportes: deportesSeleccionados.map((d) => ({
         tipo: d.tipo,
         kms: d.kms ?? null,
@@ -75,77 +71,123 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
     onClose()
   }
 
-  const canEdit = isToday || isFuture
-  const effectiveReadOnly = readOnly || (!isToday && !isFuture)
+  const canEdit = isToday && !readOnly
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center p-0"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        background: 'rgba(0,0,0,0.7)',
+      }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-t-[2rem] bg-white p-6 pb-8 flex flex-col gap-5"
-        style={{ boxShadow: '0 -8px 32px rgba(0,0,0,0.12)' }}
+        style={{
+          width: '100%',
+          maxWidth: 512,
+          background: 'var(--c-surface)',
+          borderTop: '2px solid var(--c-accent)',
+          padding: '20px 20px 32px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 20,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle */}
-        <div className="w-12 h-1.5 rounded-full bg-clay-gray mx-auto" />
-
-        {/* Date */}
-        <div className="text-center">
-          <p className="font-bold text-clay-text capitalize">{formatFecha(fecha)}</p>
-          {effectiveReadOnly && !isFuture && (
-            <p className="text-xs text-clay-gray-dark mt-0.5">Solo lectura</p>
-          )}
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontWeight: 700, color: 'var(--c-text)', textTransform: 'capitalize', fontSize: 14 }}>
+            {formatFecha(fecha)}
+          </p>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'var(--c-surface2)',
+              border: '1px solid var(--c-border)',
+              color: 'var(--c-dim)',
+              width: 28,
+              height: 28,
+              cursor: 'pointer',
+              fontSize: 14,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            ×
+          </button>
         </div>
 
-        {/* Future day — only objetivo */}
-        {isFuture && (
-          <label className="flex items-center justify-between px-1">
-            <span className="font-medium text-clay-text">Marcar como objetivo ⭐</span>
-            <ToggleSwitch value={objetivo} onChange={setObjetivo} disabled={readOnly} />
-          </label>
-        )}
-
-        {/* Today — full edit */}
-        {isToday && !readOnly && (
+        {canEdit && (
           <>
             {/* Comida */}
-            <div>
-              <p className="text-sm font-semibold text-clay-gray-dark mb-2">Comida</p>
-              <div className="flex gap-3">
-                <ChoiceButton
-                  label="🥗 Fit"
-                  active={comida === 'fit'}
-                  color="#A8D48A"
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Comida
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
                   onClick={() => setComida(comida === 'fit' ? null : 'fit')}
-                />
-                <ChoiceButton
-                  label="🍔 Fat"
-                  active={comida === 'fat'}
-                  color="#FF8A8A"
+                  style={{
+                    flex: 1,
+                    padding: '10px 0',
+                    background: comida === 'fit' ? 'var(--c-fit)' : 'var(--c-bg)',
+                    border: comida === 'fit' ? '1px solid var(--c-fit)' : '1px solid var(--c-border2)',
+                    color: comida === 'fit' ? '#fff' : 'var(--c-dim)',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  FIT
+                </button>
+                <button
                   onClick={() => setComida(comida === 'fat' ? null : 'fat')}
-                />
+                  style={{
+                    flex: 1,
+                    padding: '10px 0',
+                    background: comida === 'fat' ? 'var(--c-fat)' : 'var(--c-bg)',
+                    border: comida === 'fat' ? '1px solid var(--c-fat)' : '1px solid var(--c-border2)',
+                    color: comida === 'fat' ? '#fff' : 'var(--c-dim)',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  FAT
+                </button>
               </div>
             </div>
 
-            {/* Deportes */}
-            <div>
-              <p className="text-sm font-semibold text-clay-gray-dark mb-2">
-                Deporte {gimnasio && '✓'}
+            {/* Deporte */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Deporte{gimnasio ? ' ✓' : ''}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {DEPORTES.map((tipo) => {
                   const selected = deportesSeleccionados.some((d) => d.tipo === tipo)
                   return (
                     <button
                       key={tipo}
                       onClick={() => toggleDeporte(tipo)}
-                      className="px-3 py-1.5 rounded-xl text-sm font-medium transition-all active:scale-95"
                       style={{
-                        background: selected ? '#FFD966' : '#F5F4EE',
-                        boxShadow: selected ? 'var(--shadow-clay-sm)' : 'var(--shadow-clay-inset)',
-                        color: '#3D3A2E',
+                        padding: '6px 12px',
+                        background: 'var(--c-bg)',
+                        border: selected ? '1px solid var(--c-accent)' : '1px solid var(--c-border2)',
+                        color: selected ? 'var(--c-accent)' : 'var(--c-dim)',
+                        fontSize: 13,
+                        fontWeight: 500,
+                        cursor: 'pointer',
                       }}
                     >
                       {tipo}
@@ -155,44 +197,79 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
               </div>
 
               {correrEntry && (
-                <div className="mt-3 flex items-center gap-3">
-                  <label className="text-sm text-clay-text">Km corridos:</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
+                  <label style={{ fontSize: 13, color: 'var(--c-text)' }}>Km:</label>
                   <input
                     type="number"
                     min="0"
                     step="0.1"
                     value={correrEntry.kms ?? ''}
                     onChange={(e) => setKms(parseFloat(e.target.value))}
-                    className="w-20 rounded-xl px-3 py-1.5 text-sm text-center font-medium outline-none"
-                    style={{ boxShadow: 'var(--shadow-clay-inset)', background: '#FFFBEA' }}
+                    style={{
+                      width: 80,
+                      padding: '6px 10px',
+                      background: 'var(--c-bg)',
+                      border: '1px solid var(--c-border2)',
+                      color: 'var(--c-text)',
+                      fontSize: 14,
+                      textAlign: 'center',
+                      outline: 'none',
+                    }}
                   />
                 </div>
               )}
             </div>
 
-            {/* Objetivo */}
-            <label className="flex items-center justify-between px-1">
-              <span className="text-sm font-medium text-clay-text">También es un objetivo</span>
-              <ToggleSwitch value={objetivo} onChange={setObjetivo} />
-            </label>
+            {/* Save */}
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              style={{
+                width: '100%',
+                padding: '14px 0',
+                background: 'var(--c-accent)',
+                border: 'none',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                opacity: saving ? 0.7 : 1,
+              }}
+            >
+              {saving ? 'GUARDANDO...' : 'GUARDAR'}
+            </button>
           </>
         )}
 
-        {/* Past day read-only */}
-        {!isToday && !isFuture && registro && (
-          <div className="flex flex-col gap-3 text-sm text-clay-text">
+        {/* Read-only: past day or partner view */}
+        {!canEdit && registro && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {registro.comida && (
-              <p>Comida: <strong>{registro.comida === 'fit' ? '🥗 Fit' : '🍔 Fat'}</strong></p>
+              <p style={{ fontSize: 14, color: 'var(--c-text)' }}>
+                Comida:{' '}
+                <strong style={{ color: registro.comida === 'fit' ? 'var(--c-fit)' : 'var(--c-fat)' }}>
+                  {registro.comida === 'fit' ? 'FIT' : 'FAT'}
+                </strong>
+              </p>
             )}
-            {registro.gimnasio && (
+            {registro.gimnasio && registro.deportes.length > 0 && (
               <div>
-                <p className="font-medium mb-1">Deportes:</p>
-                <div className="flex flex-wrap gap-2">
+                <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6 }}>
+                  Deportes
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {registro.deportes.map((d) => (
                     <span
                       key={d.tipo}
-                      className="px-3 py-1 rounded-xl text-sm"
-                      style={{ background: '#FFD966' }}
+                      style={{
+                        padding: '4px 10px',
+                        background: 'var(--c-bg)',
+                        border: '1px solid var(--c-accent)',
+                        color: 'var(--c-accent)',
+                        fontSize: 13,
+                      }}
                     >
                       {d.tipo}{d.tipo === 'Correr' && d.kms ? ` ${d.kms}km` : ''}
                     </span>
@@ -201,82 +278,15 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
               </div>
             )}
             {!registro.comida && !registro.gimnasio && (
-              <p className="text-clay-gray-dark">Sin datos para este día</p>
+              <p style={{ fontSize: 14, color: 'var(--c-dim)' }}>Sin datos para este día</p>
             )}
           </div>
         )}
 
-        {/* Save button */}
-        {canEdit && !readOnly && (
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full py-3.5 rounded-2xl font-semibold text-clay-text active:scale-95 transition-transform"
-            style={{ background: '#FFD966', boxShadow: 'var(--shadow-clay)' }}
-          >
-            {saving ? 'Guardando…' : 'Guardar'}
-          </button>
+        {!canEdit && !registro && (
+          <p style={{ fontSize: 14, color: 'var(--c-dim)' }}>Sin datos para este día</p>
         )}
-
-        <button
-          onClick={onClose}
-          className="text-center text-sm text-clay-gray-dark py-1"
-        >
-          Cerrar
-        </button>
       </div>
     </div>
-  )
-}
-
-function ChoiceButton({
-  label,
-  active,
-  color,
-  onClick,
-}: {
-  label: string
-  active: boolean
-  color: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex-1 py-2.5 rounded-2xl text-sm font-medium active:scale-95 transition-transform"
-      style={{
-        background: active ? color : '#F5F4EE',
-        boxShadow: active ? 'var(--shadow-clay)' : 'var(--shadow-clay-inset)',
-        color: '#3D3A2E',
-      }}
-    >
-      {label}
-    </button>
-  )
-}
-
-function ToggleSwitch({
-  value,
-  onChange,
-  disabled = false,
-}: {
-  value: boolean
-  onChange: (v: boolean) => void
-  disabled?: boolean
-}) {
-  return (
-    <button
-      onClick={() => !disabled && onChange(!value)}
-      className="w-12 h-6 rounded-full relative transition-colors"
-      style={{ background: value ? '#FFD966' : '#E5E3D8' }}
-    >
-      <div
-        className="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform"
-        style={{
-          transform: `translateX(${value ? '26px' : '2px'})`,
-          boxShadow: '1px 1px 4px rgba(0,0,0,0.2)',
-        }}
-      />
-    </button>
   )
 }

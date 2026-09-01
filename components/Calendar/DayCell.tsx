@@ -1,36 +1,68 @@
 'use client'
 
-import { dayColor, COLOR_HEX, DayRecord } from '@/lib/dayColor'
+import { DayRecord } from '@/lib/dayColor'
 
 interface DayCellProps {
   fecha: string
   record?: DayRecord | null
   onClick: () => void
   isToday: boolean
+  isFuture: boolean
 }
 
-export default function DayCell({ fecha, record, onClick, isToday }: DayCellProps) {
+export default function DayCell({ fecha, record, onClick, isToday, isFuture }: DayCellProps) {
   const day = parseInt(fecha.split('-')[2], 10)
-  const color = dayColor(record, fecha)
-  const hex = COLOR_HEX[color]
-  const isObjetivo = color === 'objetivo'
+  const hasData = !!(record?.comida || record?.gimnasio)
+  const isEmpty = !hasData
+
+  const pips: { color: string; key: string }[] = []
+  if (record?.comida === 'fit') pips.push({ color: 'var(--c-fit)', key: 'fit' })
+  if (record?.comida === 'fat') pips.push({ color: 'var(--c-fat)', key: 'fat' })
+  if (record?.gimnasio) pips.push({ color: 'var(--c-accent)', key: 'sport' })
 
   return (
     <button
-      onClick={onClick}
-      className="aspect-square rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-90 transition-transform relative"
+      onClick={isFuture ? undefined : onClick}
       style={{
-        background: hex,
-        boxShadow: isToday
-          ? `0 0 0 2.5px #FFD966, var(--shadow-clay-sm)`
-          : 'var(--shadow-clay-sm)',
-        outline: isObjetivo ? '2.5px solid #FFD966' : 'none',
-        outlineOffset: '2px',
+        background: isEmpty ? 'var(--c-bg)' : 'var(--c-surface)',
+        border: 'none',
+        outline: isToday ? '1.5px solid var(--c-accent)' : 'none',
+        outlineOffset: -1,
+        cursor: isFuture ? 'default' : 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '4px 4px 3px',
+        minHeight: '100%',
+        width: '100%',
+        position: 'relative',
       }}
     >
-      <span className="text-sm font-semibold text-clay-text leading-none">{day}</span>
-      {record?.gimnasio && !isObjetivo && (
-        <span className="text-[10px] leading-none opacity-70">🏃</span>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: hasData ? 'var(--c-text)' : 'var(--c-muted)',
+          lineHeight: 1,
+          alignSelf: 'flex-start',
+        }}
+      >
+        {day}
+      </span>
+      {pips.length > 0 && (
+        <div style={{ display: 'flex', gap: 2, alignSelf: 'center' }}>
+          {pips.map((pip) => (
+            <div
+              key={pip.key}
+              style={{
+                width: 3.5,
+                height: 3.5,
+                background: pip.color,
+              }}
+            />
+          ))}
+        </div>
       )}
     </button>
   )

@@ -33,12 +33,20 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
 
   const mes = `${year}-${String(month).padStart(2, '0')}`
   const isReadOnly = viewingUserId !== myUserId
+  const today = new Date().toISOString().split('T')[0]
 
   const fetchRegistros = useCallback(async () => {
     setLoading(true)
     const res = await fetch(`/api/registros?mes=${mes}&userId=${viewingUserId}`)
     const data = await res.json()
-    setRegistros(Array.isArray(data) ? data : [])
+    setRegistros(
+      Array.isArray(data)
+        ? data.map((r: Registro & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
+            ...r,
+            deportes: r.deportes_dia ?? r.deportes ?? [],
+          }))
+        : []
+    )
     setLoading(false)
   }, [mes, viewingUserId])
 
@@ -65,6 +73,11 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
 
   const selectedRegistro = selectedFecha ? byFecha[selectedFecha] ?? null : null
 
+  function handleDayClick(fecha: string) {
+    if (fecha > today) return // future days not clickable
+    setSelectedFecha(fecha)
+  }
+
   async function handleSave(fecha: string, data: Partial<DayRecord & { deportes: { tipo: string; kms: number | null }[] }>) {
     await fetch('/api/registros', {
       method: 'POST',
@@ -75,47 +88,68 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto">
-      <div className="pt-4">
-        <MonthHeader
-          year={year}
-          month={month}
-          onPrev={prevMonth}
-          onNext={nextMonth}
-          onHoy={goHoy}
-          viewingUserId={viewingUserId}
-          myUserId={myUserId}
-          partnerNombre={partner?.nombre ?? null}
-          onToggleUser={() =>
-            setViewingUserId((id) => (id === myUserId ? (partner?.id ?? myUserId) : myUserId))
-          }
-        />
+    <div
+      style={{
+        height: 'calc(100dvh - 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Top bar */}
+      <div
+        style={{
+          padding: '12px 16px 8px',
+          borderBottom: '1px solid var(--c-border)',
+          flexShrink: 0,
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 16,
+            fontWeight: 800,
+            letterSpacing: '0.08em',
+            color: 'var(--c-text)',
+            margin: 0,
+          }}
+        >
+          EAT<span style={{ color: 'var(--c-accent)' }}>&</span>FIT
+        </h1>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-16 text-3xl animate-pulse">📅</div>
-      ) : (
-        <MonthGrid
-          year={year}
-          month={month}
-          registros={byFecha}
-          onDayClick={setSelectedFecha}
-        />
-      )}
+      {/* Calendar area */}
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Month header */}
+        <div style={{ padding: '8px 0 4px', flexShrink: 0 }}>
+          <MonthHeader
+            year={year}
+            month={month}
+            onPrev={prevMonth}
+            onNext={nextMonth}
+            onHoy={goHoy}
+            viewingUserId={viewingUserId}
+            myUserId={myUserId}
+            partnerNombre={partner?.nombre ?? null}
+            onToggleUser={() =>
+              setViewingUserId((id) => (id === myUserId ? (partner?.id ?? myUserId) : myUserId))
+            }
+          />
+        </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 justify-center pb-2">
-        {[
-          { color: '#A8D48A', label: 'Fit + deporte' },
-          { color: '#FFB870', label: 'Solo uno' },
-          { color: '#FF8A8A', label: 'Fat sin deporte' },
-          { color: '#E5E3D8', label: 'Sin datos' },
-        ].map(({ color, label }) => (
-          <div key={label} className="flex items-center gap-1.5 text-xs text-clay-gray-dark">
-            <div className="w-3 h-3 rounded-full" style={{ background: color }} />
-            {label}
-          </div>
-        ))}
+        {/* Grid */}
+        <div style={{ flex: 1, minHeight: 0, padding: '0 8px 8px', display: 'flex', flexDirection: 'column' }}>
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: 'var(--c-dim)', fontSize: 14 }}>
+              Cargando...
+            </div>
+          ) : (
+            <MonthGrid
+              year={year}
+              month={month}
+              registros={byFecha}
+              onDayClick={handleDayClick}
+            />
+          )}
+        </div>
       </div>
 
       {selectedFecha && (

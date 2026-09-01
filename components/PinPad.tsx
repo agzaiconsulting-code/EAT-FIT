@@ -6,13 +6,13 @@ interface PinPadProps {
   onComplete: (pin: string) => void
 }
 
-const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫']
+const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'DEL']
 
 export default function PinPad({ onComplete }: PinPadProps) {
   const [digits, setDigits] = useState<string[]>([])
 
   function handleKey(key: string) {
-    if (key === '⌫') {
+    if (key === 'DEL') {
       setDigits((d) => d.slice(0, -1))
       return
     }
@@ -34,36 +34,43 @@ export default function PinPad({ onComplete }: PinPadProps) {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="w-4 h-4 rounded-full transition-all duration-200"
             style={{
-              background: digits[i] !== undefined ? '#FFD966' : 'transparent',
-              boxShadow:
-                digits[i] !== undefined
-                  ? '2px 2px 6px #d4c98a, -2px -2px 6px #ffffff'
-                  : 'inset 2px 2px 6px #d4c98a, inset -2px -2px 6px #ffffff',
+              width: 10,
+              height: 10,
+              background: digits[i] !== undefined ? 'var(--c-accent)' : 'transparent',
+              border: '1.5px solid var(--c-border2)',
+              transition: 'background 0.15s',
             }}
           />
         ))}
       </div>
 
       {/* Keypad */}
-      <div className="grid grid-cols-3 gap-3 w-full max-w-[260px]">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '1px',
+          background: '#000',
+          width: '100%',
+          maxWidth: 260,
+        }}
+      >
         {KEYS.map((key, i) => (
           <button
             key={i}
             onClick={() => handleKey(key)}
             disabled={key === ''}
-            className={`
-              h-16 rounded-2xl text-xl font-semibold text-clay-text
-              transition-all duration-100 active:scale-95
-              ${key === '' ? 'invisible' : ''}
-              ${key === '⌫' ? 'text-clay-gray-dark text-base' : ''}
-            `}
-            style={
-              key !== ''
-                ? { background: '#FFFFFF', boxShadow: 'var(--shadow-clay-sm)' }
-                : undefined
-            }
+            style={{
+              height: 64,
+              background: key === 'DEL' ? 'var(--c-bg)' : key === '' ? 'transparent' : 'var(--c-surface)',
+              color: key === 'DEL' ? 'var(--c-dim)' : 'var(--c-text)',
+              fontSize: key === 'DEL' ? 13 : 20,
+              fontWeight: 600,
+              border: 'none',
+              cursor: key === '' ? 'default' : 'pointer',
+              visibility: key === '' ? 'hidden' : 'visible',
+            }}
           >
             {key}
           </button>

@@ -33,25 +33,50 @@ export default function PinPage() {
   }
 
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center p-6 bg-clay-bg">
+    <main
+      style={{
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        background: 'var(--c-bg)',
+      }}
+    >
       <div
-        className="w-full max-w-sm rounded-[2rem] bg-white p-8 flex flex-col items-center gap-6"
-        style={{ boxShadow: 'var(--shadow-clay)' }}
+        style={{
+          width: '100%',
+          maxWidth: 320,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 32,
+        }}
       >
-        <div className="text-6xl select-none">🍉🍔</div>
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-clay-text">Eat&amp;Fit</h1>
-          <p className="text-sm text-clay-gray-dark mt-1">Introduce tu PIN</p>
+        {/* Logo */}
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '0.1em', color: 'var(--c-text)', margin: 0 }}>
+            EAT<span style={{ color: 'var(--c-accent)' }}>&</span>FIT
+          </h1>
+          <p style={{ fontSize: 11, letterSpacing: '0.15em', color: 'var(--c-dim)', marginTop: 8, textTransform: 'uppercase' }}>
+            Introduce tu PIN
+          </p>
         </div>
 
         {error && (
-          <p className="text-sm text-red-500">PIN incorrecto, inténtalo de nuevo</p>
+          <p style={{ fontSize: 13, color: 'var(--c-fat)', textAlign: 'center' }}>
+            PIN incorrecto, inténtalo de nuevo
+          </p>
         )}
 
         {loading ? (
-          <div className="text-3xl animate-spin py-8">⚙️</div>
+          <div style={{ padding: '32px 0', color: 'var(--c-dim)', fontSize: 14 }}>Verificando...</div>
         ) : (
-          <div className={shake ? 'animate-[shake_0.5s_ease-in-out]' : ''}>
+          <div
+            className={shake ? 'shake' : ''}
+            style={{ width: '100%' }}
+          >
             <PinPad onComplete={handlePin} key={error ? 'error' : 'ok'} />
           </div>
         )}
@@ -65,6 +90,7 @@ export default function PinPage() {
           60% { transform: translateX(-6px); }
           80% { transform: translateX(6px); }
         }
+        .shake { animation: shake 0.5s ease-in-out; }
       `}</style>
     </main>
   )

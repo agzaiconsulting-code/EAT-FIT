@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import ClayCard from '@/components/ClayCard'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -45,40 +44,108 @@ export default function SettingsPage() {
     setPushStatus('ok')
   }
 
+  const sectionStyle: React.CSSProperties = {
+    background: 'var(--c-surface)',
+    border: '1px solid var(--c-border)',
+    padding: 16,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+  }
+
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto pt-6">
-      <h1 className="text-2xl font-bold text-clay-text">Ajustes</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '16px 16px 24px', maxWidth: 512, margin: '0 auto' }}>
+      <h1 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.08em', color: 'var(--c-text)', margin: 0 }}>
+        AJUSTES
+      </h1>
 
-      <ClayCard className="p-4 flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <p className="font-semibold text-clay-text">Recordatorios diarios</p>
-          <p className="text-sm text-clay-gray-dark">
-            Recibe una notificación a las 21:00 si no has rellenado el día
-          </p>
+      {/* Cuenta */}
+      <div style={sectionStyle}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+          Cuenta
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              background: 'var(--c-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16,
+              fontWeight: 700,
+              color: '#fff',
+              flexShrink: 0,
+            }}
+          >
+            U
+          </div>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text)', margin: 0 }}>Usuario</p>
+            <p style={{ fontSize: 12, color: 'var(--c-dim)', margin: '2px 0 0' }}>Sesión activa</p>
+          </div>
         </div>
+      </div>
 
-        <button
-          onClick={handlePushSubscribe}
-          disabled={pushStatus === 'loading' || pushStatus === 'ok'}
-          className="py-3 rounded-2xl font-semibold text-clay-text active:scale-95 transition-transform disabled:opacity-60"
-          style={{ background: '#FFD966', boxShadow: 'var(--shadow-clay)' }}
-        >
-          {pushStatus === 'idle' && '🔔 Activar recordatorios'}
-          {pushStatus === 'loading' && 'Activando…'}
-          {pushStatus === 'ok' && '✅ Recordatorios activados'}
-          {pushStatus === 'denied' && '❌ Permiso denegado'}
-        </button>
-      </ClayCard>
+      {/* Notificaciones */}
+      <div style={sectionStyle}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+          Notificaciones
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--c-text)', margin: 0 }}>Recordatorio diario</p>
+            <p style={{ fontSize: 12, color: 'var(--c-dim)', margin: '2px 0 0' }}>A las 21:00 si no has rellenado el día</p>
+          </div>
+          <button
+            onClick={handlePushSubscribe}
+            disabled={pushStatus === 'loading' || pushStatus === 'ok'}
+            style={{
+              padding: '8px 14px',
+              background: pushStatus === 'ok' ? 'var(--c-surface2)' : 'var(--c-accent)',
+              border: '1px solid var(--c-border)',
+              color: pushStatus === 'ok' ? 'var(--c-dim)' : '#fff',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: pushStatus === 'loading' || pushStatus === 'ok' ? 'not-allowed' : 'pointer',
+              opacity: pushStatus === 'loading' ? 0.7 : 1,
+              flexShrink: 0,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {pushStatus === 'idle' && 'Activar'}
+            {pushStatus === 'loading' && 'Activando...'}
+            {pushStatus === 'ok' && 'Activado'}
+            {pushStatus === 'denied' && 'Denegado'}
+          </button>
+        </div>
+      </div>
 
-      <ClayCard className="p-4">
+      {/* Sesión */}
+      <div style={sectionStyle}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+          Sesión
+        </p>
         <button
           onClick={handleLogout}
-          className="w-full py-3 rounded-2xl font-semibold text-red-500 active:scale-95 transition-transform"
-          style={{ background: '#FFF0F0', boxShadow: 'var(--shadow-clay-inset)' }}
+          style={{
+            width: '100%',
+            padding: '12px 0',
+            background: 'var(--c-bg)',
+            border: '1px solid var(--c-fat)',
+            color: 'var(--c-fat)',
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: 'pointer',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+          }}
         >
           Cerrar sesión
         </button>
-      </ClayCard>
+      </div>
     </div>
   )
 }

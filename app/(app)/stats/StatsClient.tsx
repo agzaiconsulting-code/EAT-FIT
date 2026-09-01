@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { calcStats, RegistroConDeportes } from '@/lib/stats'
-import ClayCard from '@/components/ClayCard'
 
 interface StatsClientProps {
   myUserId: string
@@ -26,10 +25,14 @@ export default function StatsClient({ myUserId, myNombre, partner }: StatsClient
     setLoading(true)
     const res = await fetch(`/api/registros?mes=${mes}&userId=${viewingUserId}`)
     const data = await res.json()
-    setRegistros(Array.isArray(data) ? data.map((r: RegistroConDeportes & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
-      ...r,
-      deportes: r.deportes_dia ?? r.deportes ?? [],
-    })) : [])
+    setRegistros(
+      Array.isArray(data)
+        ? data.map((r: RegistroConDeportes & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
+            ...r,
+            deportes: r.deportes_dia ?? r.deportes ?? [],
+          }))
+        : []
+    )
     setLoading(false)
   }, [mes, viewingUserId])
 
@@ -44,27 +47,49 @@ export default function StatsClient({ myUserId, myNombre, partner }: StatsClient
     setMes(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
   }
 
-  const totalDias = stats.colorCounts.verde + stats.colorCounts.naranja + stats.colorCounts.rojo + stats.colorCounts.gris
+  const cardStyle: React.CSSProperties = {
+    background: 'var(--c-surface)',
+    border: '1px solid var(--c-border)',
+    padding: 16,
+  }
 
   return (
-    <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto pt-6">
-      <h1 className="text-2xl font-bold text-clay-text">Estadísticas</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '16px 16px 24px', maxWidth: 512, margin: '0 auto' }}>
+      <h1 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.08em', color: 'var(--c-text)', margin: 0 }}>
+        ESTADÍSTICAS
+      </h1>
 
-      {/* User toggle */}
+      {/* Partner toggle */}
       {partner && (
-        <div
-          className="flex rounded-2xl overflow-hidden"
-          style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}
-        >
+        <div style={{ display: 'flex', border: '1px solid var(--c-border)', overflow: 'hidden' }}>
           <button
             onClick={() => setViewingUserId(myUserId)}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${isViewingMine ? 'bg-clay-yellow rounded-2xl' : 'text-clay-gray-dark'}`}
+            style={{
+              flex: 1,
+              padding: '8px 0',
+              fontSize: 13,
+              fontWeight: 500,
+              background: isViewingMine ? 'var(--c-accent)' : 'var(--c-surface)',
+              color: 'var(--c-text)',
+              border: 'none',
+              cursor: 'pointer',
+            }}
           >
             {myNombre}
           </button>
           <button
             onClick={() => setViewingUserId(partner.id)}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${!isViewingMine ? 'bg-clay-yellow rounded-2xl' : 'text-clay-gray-dark'}`}
+            style={{
+              flex: 1,
+              padding: '8px 0',
+              fontSize: 13,
+              fontWeight: 500,
+              background: !isViewingMine ? 'var(--c-accent)' : 'var(--c-surface)',
+              color: 'var(--c-text)',
+              border: 'none',
+              borderLeft: '1px solid var(--c-border)',
+              cursor: 'pointer',
+            }}
           >
             {partner.nombre}
           </button>
@@ -72,88 +97,117 @@ export default function StatsClient({ myUserId, myNombre, partner }: StatsClient
       )}
 
       {/* Month picker */}
-      <div className="flex items-center justify-between px-1">
-        <button onClick={() => changeMes(-1)} className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}>←</button>
-        <span className="font-semibold text-clay-text">{MESES[mesMonth - 1]} {mesYear}</span>
-        <button onClick={() => changeMes(1)} className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}>→</button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <button
+          onClick={() => changeMes(-1)}
+          style={{
+            width: 36,
+            height: 36,
+            background: 'var(--c-surface)',
+            border: '1px solid var(--c-border)',
+            color: 'var(--c-text)',
+            cursor: 'pointer',
+            fontSize: 16,
+          }}
+        >
+          ←
+        </button>
+        <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--c-text)', letterSpacing: '0.05em' }}>
+          {MESES[mesMonth - 1].toUpperCase()} {mesYear}
+        </span>
+        <button
+          onClick={() => changeMes(1)}
+          style={{
+            width: 36,
+            height: 36,
+            background: 'var(--c-surface)',
+            border: '1px solid var(--c-border)',
+            color: 'var(--c-text)',
+            cursor: 'pointer',
+            fontSize: 16,
+          }}
+        >
+          →
+        </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-3xl animate-pulse">📊</div>
+        <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--c-dim)', fontSize: 14 }}>
+          Cargando...
+        </div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {/* Summary row */}
-          <div className="grid grid-cols-3 gap-3">
-            <StatMini emoji="🏆" label="Días verdes" value={stats.colorCounts.verde} color="#A8D48A" />
-            <StatMini emoji="🔥" label="Racha verde" value={`${stats.rachaVerde}d`} color="#FFD966" />
-            <StatMini emoji="🏃" label="Km corridos" value={`${stats.totalKms.toFixed(1)}km`} color="#FFB870" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* 2x2 stat grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <StatCard label="Días Fit" value={stats.diasFit} color="var(--c-fit)" />
+            <StatCard label="Días Fat" value={stats.diasFat} color="var(--c-fat)" />
+            <StatCard label="Días Deporte" value={stats.diasDeporte} color="var(--c-accent)" />
+            <StatCard label="Semanas +" value={stats.semanasDoradas} color="var(--c-gold)" />
           </div>
 
-          {/* Color breakdown */}
-          <ClayCard className="p-4">
-            <p className="text-sm font-semibold text-clay-gray-dark mb-3">Distribución del mes</p>
-            <div className="flex gap-2 h-8 rounded-xl overflow-hidden">
-              {[
-                { color: '#A8D48A', count: stats.colorCounts.verde },
-                { color: '#FFB870', count: stats.colorCounts.naranja },
-                { color: '#FF8A8A', count: stats.colorCounts.rojo },
-                { color: '#E5E3D8', count: stats.colorCounts.gris },
-              ].map(({ color, count }) => (
-                count > 0 && (
-                  <div
-                    key={color}
-                    className="rounded-xl flex items-center justify-center text-xs font-bold text-clay-text"
-                    style={{ background: color, flex: count }}
-                  >
-                    {count}
-                  </div>
-                )
-              ))}
+          {/* Streak */}
+          {stats.rachaFit > 0 && (
+            <div
+              style={{
+                ...cardStyle,
+                borderLeft: '3px solid var(--c-accent)',
+              }}
+            >
+              <p style={{ fontSize: 13, color: 'var(--c-dim)', margin: 0 }}>Racha actual</p>
+              <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--c-accent)', margin: '4px 0 0' }}>
+                {stats.rachaFit} días fit consecutivos
+              </p>
             </div>
-            <div className="flex gap-3 mt-3 flex-wrap">
-              {[
-                { color: '#A8D48A', label: 'Verde', count: stats.colorCounts.verde },
-                { color: '#FFB870', label: 'Naranja', count: stats.colorCounts.naranja },
-                { color: '#FF8A8A', label: 'Rojo', count: stats.colorCounts.rojo },
-                { color: '#E5E3D8', label: 'Sin datos', count: stats.colorCounts.gris },
-              ].map(({ color, label, count }) => (
-                <div key={label} className="flex items-center gap-1.5 text-xs text-clay-gray-dark">
-                  <div className="w-3 h-3 rounded-full" style={{ background: color }} />
-                  {label}: {count}
-                </div>
-              ))}
-            </div>
-          </ClayCard>
+          )}
 
-          {/* Sports breakdown */}
+          {/* Sport breakdown */}
           {Object.keys(stats.deportesCounts).length > 0 && (
-            <ClayCard className="p-4">
-              <p className="text-sm font-semibold text-clay-gray-dark mb-3">Sesiones por deporte</p>
-              <div className="flex flex-col gap-2">
+            <div style={cardStyle}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12, margin: '0 0 12px' }}>
+                Sesiones por deporte
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {Object.entries(stats.deportesCounts)
                   .sort((a, b) => b[1] - a[1])
-                  .map(([tipo, count]) => (
-                    <div key={tipo} className="flex items-center justify-between">
-                      <span className="text-sm text-clay-text">{tipo}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 rounded-full bg-clay-gray overflow-hidden">
+                  .map(([tipo, count]) => {
+                    const max = Math.max(...Object.values(stats.deportesCounts))
+                    return (
+                      <div key={tipo} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{ fontSize: 13, color: 'var(--c-text)', width: 80, flexShrink: 0 }}>{tipo}</span>
+                        <div style={{ flex: 1, height: 4, background: 'var(--c-border2)' }}>
                           <div
-                            className="h-full rounded-full bg-clay-yellow"
-                            style={{ width: `${(count / Math.max(...Object.values(stats.deportesCounts))) * 100}%` }}
+                            style={{
+                              height: '100%',
+                              width: `${(count / max) * 100}%`,
+                              background: 'var(--c-accent)',
+                            }}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-clay-text w-4 text-right">{count}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text)', width: 20, textAlign: 'right' }}>
+                          {count}
+                        </span>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
               </div>
-            </ClayCard>
+            </div>
+          )}
+
+          {/* Total km */}
+          {stats.totalKms > 0 && (
+            <div style={cardStyle}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 4px' }}>
+                Total corrido
+              </p>
+              <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--c-text)', margin: 0 }}>
+                {stats.totalKms.toFixed(1)} km
+              </p>
+            </div>
           )}
 
           {stats.diasConDatos === 0 && (
-            <div className="text-center py-8 text-clay-gray-dark">
-              <p className="text-4xl mb-2">🌱</p>
-              <p className="text-sm">Sin datos aún para este mes</p>
+            <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--c-dim)', fontSize: 14 }}>
+              Sin datos para este mes
             </div>
           )}
         </div>
@@ -162,15 +216,24 @@ export default function StatsClient({ myUserId, myNombre, partner }: StatsClient
   )
 }
 
-function StatMini({ emoji, label, value, color }: { emoji: string; label: string; value: string | number; color: string }) {
+function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div
-      className="rounded-2xl p-3 flex flex-col gap-1 items-center text-center"
-      style={{ background: color, boxShadow: 'var(--shadow-clay-sm)' }}
+      style={{
+        background: 'var(--c-surface)',
+        border: '1px solid var(--c-border)',
+        padding: '14px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+      }}
     >
-      <span className="text-xl">{emoji}</span>
-      <span className="text-lg font-bold text-clay-text">{value}</span>
-      <span className="text-[10px] text-clay-text opacity-70 leading-tight">{label}</span>
+      <span style={{ fontSize: 11, color: 'var(--c-dim)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 28, fontWeight: 700, color, lineHeight: 1 }}>
+        {value}
+      </span>
     </div>
   )
 }

@@ -9,8 +9,12 @@ interface ClayCardProps {
 export default function ClayCard({ children, className = '', style }: ClayCardProps) {
   return (
     <div
-      className={`bg-white rounded-[1.75rem] ${className}`}
-      style={{ boxShadow: 'var(--shadow-clay)', ...style }}
+      className={className}
+      style={{
+        background: 'var(--c-surface)',
+        border: '1px solid var(--c-border)',
+        ...style,
+      }}
     >
       {children}
     </div>

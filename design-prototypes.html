@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eat&Fit — Prototipos de Diseño</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0D0D0D; color: #fff; }
+
+  /* SELECTOR */
+  .selector {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #0D0D0D; border-bottom: 1px solid #222;
+    display: flex; align-items: center; gap: 0; padding: 0 24px;
+    height: 56px;
+  }
+  .selector-label { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-right: 24px; white-space: nowrap; }
+  .tab-btn {
+    padding: 0 24px; height: 56px; border: none; background: transparent;
+    color: #555; font-size: 13px; font-weight: 500; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.15s; letter-spacing: 0.5px;
+    font-family: inherit; text-transform: uppercase; white-space: nowrap;
+  }
+  .tab-btn.active { color: #fff; border-bottom-color: #fff; }
+  .tab-btn:hover:not(.active) { color: #999; }
+
+  /* CONTENT */
+  .content { padding-top: 56px; }
+  .prototype { display: none; }
+  .prototype.active { display: block; }
+
+  /* PROTOTYPE LAYOUT */
+  .proto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .proto-section {
+    padding: 48px 32px;
+    border-right: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .proto-section:last-child { border-right: none; }
+  .section-label {
+    font-size: 10px; color: #444; text-transform: uppercase;
+    letter-spacing: 3px; margin-bottom: 32px; font-weight: 600;
+  }
+
+  /* PHONE MOCKUP */
+  .phone {
+    width: 280px; height: 560px; margin: 0 auto;
+    border: 1px solid #333; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* PALETTE */
+  .palette { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .swatch {
+    width: 48px; height: 48px; position: relative;
+  }
+  .swatch-label { font-size: 9px; color: #444; margin-top: 4px; text-align: center; font-family: monospace; }
+
+  /* TYPOGRAPHY SAMPLE */
+  .type-sample { margin-bottom: 12px; }
+
+
+  /* ===================== */
+  /*  PROTOTYPE A: OBSIDIAN */
+  /* ===================== */
+  .a-bg { background: #080808; }
+  .a-surface { background: #111111; }
+  .a-surface2 { background: #161616; }
+  .a-border { border-color: #252525; }
+  .a-accent { background: #00E87A; }
+  .a-accent-text { color: #00E87A; }
+  .a-text { color: #FFFFFF; }
+  .a-muted { color: #555555; }
+
+  .a-phone { background: #080808; border-color: #252525; }
+
+  /* A — PIN Screen */
+  .a-pin-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; gap: 32px; background: #080808;
+  }
+  .a-logo { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -1px; }
+  .a-logo span { color: #00E87A; }
+  .a-subtitle { font-size: 11px; color: #444; text-transform: uppercase; letter-spacing: 3px; }
+  .a-dots { display: flex; gap: 12px; }
+  .a-dot { width: 10px; height: 10px; border: 1.5px solid #333; background: transparent; }
+  .a-dot.filled { background: #00E87A; border-color: #00E87A; }
+  .a-numpad { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; width: 100%; background: #1a1a1a; }
+  .a-key {
+    background: #111; padding: 14px; text-align: center;
+    font-size: 18px; font-weight: 600; color: #fff;
+  }
+  .a-key.accent { background: #00E87A; color: #000; }
+  .a-key.del { background: #111; color: #555; font-size: 13px; }
+  .a-key.empty { background: #080808; }
+
+  /* A — Home Screen */
+  .a-home-screen { flex: 1; display: flex; flex-direction: column; background: #080808; overflow: hidden; }
+  .a-topbar { padding: 16px 16px 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a1a1a; }
+  .a-month { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .a-avatar { width: 28px; height: 28px; background: #00E87A; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #000; }
+  .a-weekdays { display: grid; grid-template-columns: repeat(7,1fr); padding: 6px 8px 0; gap: 1px; }
+  .a-wd { font-size: 8px; color: #333; text-align: center; font-weight: 600; text-transform: uppercase; padding: 4px 0; }
+  .a-cal { display: grid; grid-template-columns: repeat(7,1fr); padding: 0 8px 8px; gap: 1px; flex: 1; }
+  .a-day {
+    aspect-ratio: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; font-size: 9px;
+    color: #333; gap: 2px; position: relative; background: #0f0f0f;
+  }
+  .a-day.active { color: #fff; background: #141414; }
+  .a-day.today { outline: 1px solid #00E87A; color: #00E87A; }
+  .a-day-num { font-weight: 600; font-size: 10px; }
+  .a-pip { width: 4px; height: 4px; }
+  .a-pip.fit { background: #00E87A; }
+  .a-pip.fat { background: #FF3B3B; }
+  .a-pip.gym { background: #4D9EFF; }
+  .a-pip.empty { background: transparent; }
+  .a-pips { display: flex; gap: 1px; }
+  .a-nav { display: flex; border-top: 1px solid #1a1a1a; background: #080808; }
+  .a-nav-item { flex: 1; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .a-nav-icon { width: 18px; height: 2px; background: #333; }
+  .a-nav-icon.active { background: #00E87A; }
+  .a-nav-label { font-size: 7px; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+  .a-nav-label.active { color: #00E87A; }
+
+  /* A — Modal */
+  .a-modal-screen { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.85); }
+  .a-modal-sheet { background: #111; flex: 1; margin-top: 80px; padding: 20px; display: flex; flex-direction: column; gap: 16px; border-top: 1px solid #252525; }
+  .a-modal-title { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #1a1a1a; padding-bottom: 12px; display: flex; justify-content: space-between; }
+  .a-modal-close { color: #444; font-size: 16px; }
+  .a-field-label { font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .a-toggle-row { display: flex; gap: 4px; }
+  .a-toggle { flex: 1; padding: 8px; text-align: center; font-size: 10px; font-weight: 600; border: 1px solid #222; color: #444; background: #0d0d0d; }
+  .a-toggle.on { background: #00E87A; color: #000; border-color: #00E87A; }
+  .a-toggle.fat-on { background: #FF3B3B; color: #fff; border-color: #FF3B3B; }
+  .a-tag-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .a-tag { padding: 5px 8px; font-size: 9px; border: 1px solid #222; color: #444; background: #0d0d0d; }
+  .a-tag.on { border-color: #4D9EFF; color: #4D9EFF; }
+  .a-save-btn { margin-top: auto; padding: 12px; background: #00E87A; color: #000; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+
+
+  /* ===================== */
+  /*  PROTOTYPE B: ARCTIC  */
+  /* ===================== */
+  .b-phone { background: #F2F3F5; border-color: #D0D3D8; }
+
+  .b-pin-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; gap: 28px; background: #F2F3F5;
+  }
+  .b-logo { font-size: 26px; font-weight: 800; color: #0A0A0A; letter-spacing: -1px; }
+  .b-logo span { color: #0057FF; }
+  .b-subtitle { font-size: 10px; color: #9AA0AC; text-transform: uppercase; letter-spacing: 3px; }
+  .b-dots { display: flex; gap: 12px; }
+  .b-dot { width: 10px; height: 10px; border: 1.5px solid #C8CBD0; background: transparent; }
+  .b-dot.filled { background: #0057FF; border-color: #0057FF; }
+  .b-numpad { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; width: 100%; background: #D0D3D8; }
+  .b-key { background: #fff; padding: 14px; text-align: center; font-size: 18px; font-weight: 600; color: #0A0A0A; }
+  .b-key.accent { background: #0057FF; color: #fff; }
+  .b-key.del { background: #F2F3F5; color: #9AA0AC; font-size: 13px; }
+  .b-key.empty { background: #F2F3F5; }
+
+  .b-home-screen { flex: 1; display: flex; flex-direction: column; background: #F2F3F5; overflow: hidden; }
+  .b-topbar { padding: 16px 16px 8px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-bottom: 1px solid #E4E6EA; }
+  .b-month { font-size: 12px; font-weight: 700; color: #0A0A0A; letter-spacing: 1px; text-transform: uppercase; }
+  .b-avatar { width: 28px; height: 28px; background: #0057FF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
+  .b-weekdays { display: grid; grid-template-columns: repeat(7,1fr); padding: 6px 8px 0; gap: 1px; }
+  .b-wd { font-size: 8px; color: #B0B5BE; text-align: center; font-weight: 700; text-transform: uppercase; padding: 4px 0; }
+  .b-cal { display: grid; grid-template-columns: repeat(7,1fr); padding: 0 8px 8px; gap: 1px; flex: 1; }
+  .b-day {
+    aspect-ratio: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; font-size: 9px;
+    color: #C0C5CE; gap: 2px; background: #ECEEF1;
+  }
+  .b-day.active { color: #0A0A0A; background: #fff; }
+  .b-day.today { outline: 2px solid #0057FF; color: #0057FF; background: #fff; }
+  .b-day-num { font-weight: 700; font-size: 10px; }
+  .b-pip { width: 4px; height: 4px; }
+  .b-pip.fit { background: #00C96B; }
+  .b-pip.fat { background: #FF3B3B; }
+  .b-pip.gym { background: #0057FF; }
+  .b-pips { display: flex; gap: 1px; }
+  .b-nav { display: flex; border-top: 1px solid #E4E6EA; background: #fff; }
+  .b-nav-item { flex: 1; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .b-nav-icon { width: 18px; height: 2px; background: #D0D3D8; }
+  .b-nav-icon.active { background: #0057FF; }
+  .b-nav-label { font-size: 7px; color: #B0B5BE; text-transform: uppercase; letter-spacing: 1px; }
+  .b-nav-label.active { color: #0057FF; }
+
+  .b-modal-screen { flex: 1; display: flex; flex-direction: column; background: rgba(10,10,10,0.4); }
+  .b-modal-sheet { background: #fff; flex: 1; margin-top: 80px; padding: 20px; display: flex; flex-direction: column; gap: 14px; border-top: 2px solid #0057FF; }
+  .b-modal-title { font-size: 12px; font-weight: 800; color: #0A0A0A; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #E4E6EA; padding-bottom: 12px; display: flex; justify-content: space-between; }
+  .b-modal-close { color: #C0C5CE; font-size: 16px; }
+  .b-field-label { font-size: 9px; color: #9AA0AC; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .b-toggle-row { display: flex; gap: 4px; }
+  .b-toggle { flex: 1; padding: 8px; text-align: center; font-size: 10px; font-weight: 700; border: 1.5px solid #E4E6EA; color: #B0B5BE; background: #F8F9FA; }
+  .b-toggle.on { background: #0057FF; color: #fff; border-color: #0057FF; }
+  .b-toggle.fat-on { background: #FF3B3B; color: #fff; border-color: #FF3B3B; }
+  .b-tag-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .b-tag { padding: 5px 8px; font-size: 9px; border: 1.5px solid #E4E6EA; color: #9AA0AC; background: #F8F9FA; }
+  .b-tag.on { border-color: #0057FF; color: #0057FF; background: #EEF4FF; }
+  .b-save-btn { margin-top: auto; padding: 12px; background: #0057FF; color: #fff; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+
+
+  /* ===================== */
+  /*  PROTOTYPE C: CARBON  */
+  /* ===================== */
+  .c-phone { background: #0C0C0C; border-color: #1E1E1E; }
+
+  .c-pin-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; gap: 28px; background: #0C0C0C;
+  }
+  .c-logo { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -2px; }
+  .c-logo span { color: #FF6B00; }
+  .c-subtitle { font-size: 10px; color: #3A3A3A; text-transform: uppercase; letter-spacing: 3px; }
+  .c-dots { display: flex; gap: 12px; }
+  .c-dot { width: 10px; height: 10px; border: 1.5px solid #2A2A2A; background: transparent; }
+  .c-dot.filled { background: #FF6B00; border-color: #FF6B00; }
+  .c-numpad { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; width: 100%; background: #000; }
+  .c-key { background: #141414; padding: 14px; text-align: center; font-size: 18px; font-weight: 700; color: #fff; }
+  .c-key.accent { background: #FF6B00; color: #fff; font-weight: 900; }
+  .c-key.del { background: #0C0C0C; color: #3A3A3A; font-size: 13px; font-weight: 600; }
+  .c-key.empty { background: #0C0C0C; }
+
+  .c-home-screen { flex: 1; display: flex; flex-direction: column; background: #0C0C0C; overflow: hidden; }
+  .c-topbar { padding: 16px 16px 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1E1E1E; }
+  .c-month { font-size: 12px; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+  .c-avatar { width: 28px; height: 28px; background: #FF6B00; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #fff; }
+  .c-weekdays { display: grid; grid-template-columns: repeat(7,1fr); padding: 6px 8px 0; gap: 1px; }
+  .c-wd { font-size: 8px; color: #2A2A2A; text-align: center; font-weight: 700; text-transform: uppercase; padding: 4px 0; }
+  .c-cal { display: grid; grid-template-columns: repeat(7,1fr); padding: 0 8px 8px; gap: 1px; flex: 1; }
+  .c-day {
+    aspect-ratio: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; font-size: 9px;
+    color: #2A2A2A; gap: 2px; background: #0f0f0f;
+  }
+  .c-day.active { color: #fff; background: #141414; }
+  .c-day.today { outline: 2px solid #FF6B00; color: #FF6B00; }
+  .c-day-num { font-weight: 700; font-size: 10px; }
+  .c-pip { width: 4px; height: 4px; }
+  .c-pip.fit { background: #00D46A; }
+  .c-pip.fat { background: #FF3B3B; }
+  .c-pip.gym { background: #FF6B00; }
+  .c-pips { display: flex; gap: 1px; }
+  .c-nav { display: flex; border-top: 1px solid #1E1E1E; background: #0C0C0C; }
+  .c-nav-item { flex: 1; padding: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .c-nav-icon { width: 18px; height: 2px; background: #2A2A2A; }
+  .c-nav-icon.active { background: #FF6B00; }
+  .c-nav-label { font-size: 7px; color: #2A2A2A; text-transform: uppercase; letter-spacing: 1px; }
+  .c-nav-label.active { color: #FF6B00; }
+
+  .c-modal-screen { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.9); }
+  .c-modal-sheet { background: #111; flex: 1; margin-top: 80px; padding: 20px; display: flex; flex-direction: column; gap: 14px; border-top: 2px solid #FF6B00; }
+  .c-modal-title { font-size: 12px; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #1E1E1E; padding-bottom: 12px; display: flex; justify-content: space-between; }
+  .c-modal-close { color: #333; font-size: 16px; }
+  .c-field-label { font-size: 9px; color: #3A3A3A; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .c-toggle-row { display: flex; gap: 4px; }
+  .c-toggle { flex: 1; padding: 8px; text-align: center; font-size: 10px; font-weight: 700; border: 1px solid #1E1E1E; color: #3A3A3A; background: #0C0C0C; }
+  .c-toggle.on { background: #00D46A; color: #fff; border-color: #00D46A; }
+  .c-toggle.fat-on { background: #FF3B3B; color: #fff; border-color: #FF3B3B; }
+  .c-tag-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .c-tag { padding: 5px 8px; font-size: 9px; border: 1px solid #1E1E1E; color: #3A3A3A; background: #0C0C0C; }
+  .c-tag.on { border-color: #FF6B00; color: #FF6B00; }
+  .c-save-btn { margin-top: auto; padding: 12px; background: #FF6B00; color: #fff; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+
+
+  /* PALETTE DISPLAY */
+  .palette-grid { display: flex; gap: 0; margin-bottom: 32px; overflow: hidden; }
+  .pal-swatch { flex: 1; height: 40px; }
+  .pal-info { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 24px; }
+  .pal-token { font-size: 9px; }
+  .pal-token-name { color: #444; text-transform: uppercase; letter-spacing: 1px; font-size: 8px; margin-bottom: 2px; }
+  .pal-token-val { font-family: monospace; font-size: 10px; }
+
+  .desc-box { padding: 20px; border: 1px solid #1a1a1a; margin-bottom: 24px; }
+  .desc-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .desc-text { font-size: 12px; color: #555; line-height: 1.6; }
+
+  .screens-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .screen-wrap { text-align: center; }
+  .screen-label { font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="selector">
+  <span class="selector-label">Eat&Fit</span>
+  <button class="tab-btn active" onclick="show('a')">A — Obsidian</button>
+  <button class="tab-btn" onclick="show('b')">B — Arctic</button>
+  <button class="tab-btn" onclick="show('c')">C — Carbon</button>
+</div>
+
+<div class="content">
+
+  <!-- =================== PROTOTYPE A =================== -->
+  <div class="prototype active" id="proto-a">
+    <div class="proto-grid">
+
+      <!-- Descripción + Paleta -->
+      <div class="proto-section">
+        <div class="section-label">Identidad visual</div>
+
+        <div class="desc-box">
+          <div class="desc-title" style="color:#00E87A">A — Obsidian</div>
+          <div class="desc-text">
+            Fondo negro puro con acento verde neón. Estética de dashboard de rendimiento —
+            cada dato destaca sobre el vacío. Sin bordes redondeados, líneas de 1px, tipografía
+            monoespaciada para datos. Sensación de terminal profesional.
+          </div>
+        </div>
+
+        <div class="palette-grid">
+          <div class="pal-swatch" style="background:#080808"></div>
+          <div class="pal-swatch" style="background:#111111"></div>
+          <div class="pal-swatch" style="background:#161616"></div>
+          <div class="pal-swatch" style="background:#252525"></div>
+          <div class="pal-swatch" style="background:#555555"></div>
+          <div class="pal-swatch" style="background:#00E87A"></div>
+          <div class="pal-swatch" style="background:#FF3B3B"></div>
+          <div class="pal-swatch" style="background:#4D9EFF"></div>
+        </div>
+
+        <div class="pal-info">
+          <div class="pal-token">
+            <div class="pal-token-name">Background</div>
+            <div class="pal-token-val" style="color:#00E87A">#080808</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Surface</div>
+            <div class="pal-token-val" style="color:#00E87A">#111111</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Accent</div>
+            <div class="pal-token-val" style="color:#00E87A">#00E87A</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Border</div>
+            <div class="pal-token-val" style="color:#00E87A">#252525</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fit</div>
+            <div class="pal-token-val" style="color:#00E87A">#00E87A</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fat</div>
+            <div class="pal-token-val" style="color:#FF3B3B">#FF3B3B</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Gym</div>
+            <div class="pal-token-val" style="color:#4D9EFF">#4D9EFF</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Font</div>
+            <div class="pal-token-val" style="color:#555">Inter / Mono</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pantallas -->
+      <div class="proto-section">
+        <div class="section-label">Pantallas</div>
+        <div class="screens-row">
+
+          <!-- PIN -->
+          <div class="screen-wrap">
+            <div class="screen-label">Acceso</div>
+            <div class="phone a-phone">
+              <div class="a-pin-screen">
+                <div>
+                  <div class="a-logo">EAT<span>&FIT</span></div>
+                  <div class="a-subtitle" style="text-align:center;margin-top:4px">Introduce tu PIN</div>
+                </div>
+                <div class="a-dots">
+                  <div class="a-dot filled"></div>
+                  <div class="a-dot filled"></div>
+                  <div class="a-dot"></div>
+                  <div class="a-dot"></div>
+                </div>
+                <div class="a-numpad">
+                  <div class="a-key">1</div><div class="a-key">2</div><div class="a-key">3</div>
+                  <div class="a-key">4</div><div class="a-key">5</div><div class="a-key">6</div>
+                  <div class="a-key">7</div><div class="a-key">8</div><div class="a-key">9</div>
+                  <div class="a-key empty"></div><div class="a-key">0</div><div class="a-key del">DEL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HOME -->
+          <div class="screen-wrap">
+            <div class="screen-label">Calendario</div>
+            <div class="phone a-phone">
+              <div class="a-home-screen">
+                <div class="a-topbar">
+                  <div class="a-month">SEPTIEMBRE 2026</div>
+                  <div class="a-avatar">AG</div>
+                </div>
+                <div class="a-weekdays">
+                  <div class="a-wd">L</div><div class="a-wd">M</div><div class="a-wd">X</div>
+                  <div class="a-wd">J</div><div class="a-wd">V</div><div class="a-wd">S</div><div class="a-wd">D</div>
+                </div>
+                <div class="a-cal">
+                  <div class="a-day"></div><div class="a-day active"><div class="a-day-num">1</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">2</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">3</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">4</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">5</div></div>
+                  <div class="a-day active"><div class="a-day-num">6</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">7</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">8</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">9</div><div class="a-pips"><div class="a-pip fat"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">10</div></div>
+                  <div class="a-day active"><div class="a-day-num">11</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">12</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">13</div></div>
+                  <div class="a-day active"><div class="a-day-num">14</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">15</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">16</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">17</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">18</div></div>
+                  <div class="a-day active"><div class="a-day-num">19</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">20</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">21</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">22</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">23</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">24</div></div>
+                  <div class="a-day active"><div class="a-day-num">25</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">26</div><div class="a-pips"><div class="a-pip fat"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">27</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day active"><div class="a-day-num">28</div></div>
+                  <div class="a-day active"><div class="a-day-num">29</div><div class="a-pips"><div class="a-pip fit"></div></div></div>
+                  <div class="a-day today"><div class="a-day-num">30</div><div class="a-pips"><div class="a-pip fit"></div><div class="a-pip gym"></div></div></div>
+                  <div class="a-day"></div><div class="a-day"></div><div class="a-day"></div><div class="a-day"></div><div class="a-day"></div>
+                </div>
+                <div class="a-nav">
+                  <div class="a-nav-item"><div class="a-nav-icon active"></div><div class="a-nav-label active">Inicio</div></div>
+                  <div class="a-nav-item"><div class="a-nav-icon"></div><div class="a-nav-label">Stats</div></div>
+                  <div class="a-nav-item"><div class="a-nav-icon"></div><div class="a-nav-label">Ajustes</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODAL -->
+          <div class="screen-wrap">
+            <div class="screen-label">Editar día</div>
+            <div class="phone a-phone">
+              <div class="a-modal-screen">
+                <div class="a-modal-sheet">
+                  <div class="a-modal-title">30 SEP <span class="a-modal-close">✕</span></div>
+                  <div>
+                    <div class="a-field-label">Comida</div>
+                    <div class="a-toggle-row">
+                      <div class="a-toggle on">FIT</div>
+                      <div class="a-toggle">FAT</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="a-field-label">Deporte</div>
+                    <div class="a-tag-row">
+                      <div class="a-tag on">Gym</div>
+                      <div class="a-tag on">Correr</div>
+                      <div class="a-tag">Spinning</div>
+                      <div class="a-tag">Padel</div>
+                      <div class="a-tag">Pump</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="a-field-label">Objetivo</div>
+                    <div class="a-toggle-row">
+                      <div class="a-toggle on">Sí</div>
+                      <div class="a-toggle">No</div>
+                    </div>
+                  </div>
+                  <div class="a-save-btn">GUARDAR</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== PROTOTYPE B =================== -->
+  <div class="prototype" id="proto-b">
+    <div class="proto-grid">
+
+      <div class="proto-section">
+        <div class="section-label">Identidad visual</div>
+
+        <div class="desc-box" style="border-color:#E4E6EA">
+          <div class="desc-title" style="color:#0057FF">B — Arctic</div>
+          <div class="desc-text" style="color:#9AA0AC">
+            Fondo gris claro con superficies blancas. Acento azul eléctrico puro.
+            Estética de app financiera o SaaS profesional. Limpio, jerárquico, directo.
+            Contraste de datos máximo en fondo blanco.
+          </div>
+        </div>
+
+        <div class="palette-grid">
+          <div class="pal-swatch" style="background:#F2F3F5"></div>
+          <div class="pal-swatch" style="background:#ECEEF1"></div>
+          <div class="pal-swatch" style="background:#FFFFFF"></div>
+          <div class="pal-swatch" style="background:#D0D3D8"></div>
+          <div class="pal-swatch" style="background:#9AA0AC"></div>
+          <div class="pal-swatch" style="background:#0057FF"></div>
+          <div class="pal-swatch" style="background:#00C96B"></div>
+          <div class="pal-swatch" style="background:#FF3B3B"></div>
+        </div>
+
+        <div class="pal-info">
+          <div class="pal-token">
+            <div class="pal-token-name">Background</div>
+            <div class="pal-token-val" style="color:#0057FF">#F2F3F5</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Surface</div>
+            <div class="pal-token-val" style="color:#0057FF">#FFFFFF</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Accent</div>
+            <div class="pal-token-val" style="color:#0057FF">#0057FF</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Border</div>
+            <div class="pal-token-val" style="color:#0057FF">#E4E6EA</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fit</div>
+            <div class="pal-token-val" style="color:#00C96B">#00C96B</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fat</div>
+            <div class="pal-token-val" style="color:#FF3B3B">#FF3B3B</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Gym</div>
+            <div class="pal-token-val" style="color:#0057FF">#0057FF</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Font</div>
+            <div class="pal-token-val" style="color:#9AA0AC">Inter</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-section" style="border-color:#E4E6EA; background:#F2F3F5">
+        <div class="section-label" style="color:#B0B5BE">Pantallas</div>
+        <div class="screens-row">
+
+          <div class="screen-wrap">
+            <div class="screen-label" style="color:#B0B5BE">Acceso</div>
+            <div class="phone b-phone">
+              <div class="b-pin-screen">
+                <div>
+                  <div class="b-logo">EAT<span>&FIT</span></div>
+                  <div class="b-subtitle" style="text-align:center;margin-top:4px">Introduce tu PIN</div>
+                </div>
+                <div class="b-dots">
+                  <div class="b-dot filled"></div>
+                  <div class="b-dot filled"></div>
+                  <div class="b-dot"></div>
+                  <div class="b-dot"></div>
+                </div>
+                <div class="b-numpad">
+                  <div class="b-key">1</div><div class="b-key">2</div><div class="b-key">3</div>
+                  <div class="b-key">4</div><div class="b-key">5</div><div class="b-key">6</div>
+                  <div class="b-key">7</div><div class="b-key">8</div><div class="b-key">9</div>
+                  <div class="b-key empty"></div><div class="b-key">0</div><div class="b-key del">DEL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-wrap">
+            <div class="screen-label" style="color:#B0B5BE">Calendario</div>
+            <div class="phone b-phone">
+              <div class="b-home-screen">
+                <div class="b-topbar">
+                  <div class="b-month">SEPTIEMBRE 2026</div>
+                  <div class="b-avatar">AG</div>
+                </div>
+                <div class="b-weekdays">
+                  <div class="b-wd">L</div><div class="b-wd">M</div><div class="b-wd">X</div>
+                  <div class="b-wd">J</div><div class="b-wd">V</div><div class="b-wd">S</div><div class="b-wd">D</div>
+                </div>
+                <div class="b-cal">
+                  <div class="b-day"></div>
+                  <div class="b-day active"><div class="b-day-num">1</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">2</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">3</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">4</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">5</div></div>
+                  <div class="b-day active"><div class="b-day-num">6</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">7</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">8</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">9</div><div class="b-pips"><div class="b-pip fat"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">10</div></div>
+                  <div class="b-day active"><div class="b-day-num">11</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">12</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">13</div></div>
+                  <div class="b-day active"><div class="b-day-num">14</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">15</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">16</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">17</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">18</div></div>
+                  <div class="b-day active"><div class="b-day-num">19</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">20</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">21</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">22</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">23</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">24</div></div>
+                  <div class="b-day active"><div class="b-day-num">25</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">26</div><div class="b-pips"><div class="b-pip fat"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">27</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day active"><div class="b-day-num">28</div></div>
+                  <div class="b-day active"><div class="b-day-num">29</div><div class="b-pips"><div class="b-pip fit"></div></div></div>
+                  <div class="b-day today"><div class="b-day-num">30</div><div class="b-pips"><div class="b-pip fit"></div><div class="b-pip gym"></div></div></div>
+                  <div class="b-day"></div><div class="b-day"></div><div class="b-day"></div><div class="b-day"></div><div class="b-day"></div>
+                </div>
+                <div class="b-nav">
+                  <div class="b-nav-item"><div class="b-nav-icon active"></div><div class="b-nav-label active">Inicio</div></div>
+                  <div class="b-nav-item"><div class="b-nav-icon"></div><div class="b-nav-label">Stats</div></div>
+                  <div class="b-nav-item"><div class="b-nav-icon"></div><div class="b-nav-label">Ajustes</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-wrap">
+            <div class="screen-label" style="color:#B0B5BE">Editar día</div>
+            <div class="phone b-phone">
+              <div class="b-modal-screen">
+                <div class="b-modal-sheet">
+                  <div class="b-modal-title">30 SEP <span class="b-modal-close">✕</span></div>
+                  <div>
+                    <div class="b-field-label">Comida</div>
+                    <div class="b-toggle-row">
+                      <div class="b-toggle on">FIT</div>
+                      <div class="b-toggle">FAT</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="b-field-label">Deporte</div>
+                    <div class="b-tag-row">
+                      <div class="b-tag on">Gym</div>
+                      <div class="b-tag on">Correr</div>
+                      <div class="b-tag">Spinning</div>
+                      <div class="b-tag">Padel</div>
+                      <div class="b-tag">Pump</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="b-field-label">Objetivo</div>
+                    <div class="b-toggle-row">
+                      <div class="b-toggle on">Sí</div>
+                      <div class="b-toggle">No</div>
+                    </div>
+                  </div>
+                  <div class="b-save-btn">GUARDAR</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== PROTOTYPE C =================== -->
+  <div class="prototype" id="proto-c">
+    <div class="proto-grid">
+
+      <div class="proto-section">
+        <div class="section-label">Identidad visual</div>
+
+        <div class="desc-box" style="border-color:#1E1E1E">
+          <div class="desc-title" style="color:#FF6B00">C — Carbon</div>
+          <div class="desc-text" style="color:#555">
+            Negro carbón con acento naranja intenso. Estética deportiva de alto rendimiento —
+            energía y tensión visual. Tipografía extra-bold condensada. Ideal para motivación diaria.
+            La línea de acento naranja ancla cada componente.
+          </div>
+        </div>
+
+        <div class="palette-grid">
+          <div class="pal-swatch" style="background:#0C0C0C"></div>
+          <div class="pal-swatch" style="background:#111111"></div>
+          <div class="pal-swatch" style="background:#141414"></div>
+          <div class="pal-swatch" style="background:#1E1E1E"></div>
+          <div class="pal-swatch" style="background:#3A3A3A"></div>
+          <div class="pal-swatch" style="background:#FF6B00"></div>
+          <div class="pal-swatch" style="background:#00D46A"></div>
+          <div class="pal-swatch" style="background:#FF3B3B"></div>
+        </div>
+
+        <div class="pal-info">
+          <div class="pal-token">
+            <div class="pal-token-name">Background</div>
+            <div class="pal-token-val" style="color:#FF6B00">#0C0C0C</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Surface</div>
+            <div class="pal-token-val" style="color:#FF6B00">#141414</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Accent</div>
+            <div class="pal-token-val" style="color:#FF6B00">#FF6B00</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Border</div>
+            <div class="pal-token-val" style="color:#FF6B00">#1E1E1E</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fit</div>
+            <div class="pal-token-val" style="color:#00D46A">#00D46A</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Fat</div>
+            <div class="pal-token-val" style="color:#FF3B3B">#FF3B3B</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Gym</div>
+            <div class="pal-token-val" style="color:#FF6B00">#FF6B00</div>
+          </div>
+          <div class="pal-token">
+            <div class="pal-token-name">Font</div>
+            <div class="pal-token-val" style="color:#555">Inter Black</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proto-section">
+        <div class="section-label">Pantallas</div>
+        <div class="screens-row">
+
+          <div class="screen-wrap">
+            <div class="screen-label">Acceso</div>
+            <div class="phone c-phone">
+              <div class="c-pin-screen">
+                <div>
+                  <div class="c-logo">EAT<span>&FIT</span></div>
+                  <div class="c-subtitle" style="text-align:center;margin-top:4px">Introduce tu PIN</div>
+                </div>
+                <div class="c-dots">
+                  <div class="c-dot filled"></div>
+                  <div class="c-dot filled"></div>
+                  <div class="c-dot"></div>
+                  <div class="c-dot"></div>
+                </div>
+                <div class="c-numpad">
+                  <div class="c-key">1</div><div class="c-key">2</div><div class="c-key">3</div>
+                  <div class="c-key">4</div><div class="c-key">5</div><div class="c-key">6</div>
+                  <div class="c-key">7</div><div class="c-key">8</div><div class="c-key">9</div>
+                  <div class="c-key empty"></div><div class="c-key">0</div><div class="c-key del">DEL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-wrap">
+            <div class="screen-label">Calendario</div>
+            <div class="phone c-phone">
+              <div class="c-home-screen">
+                <div class="c-topbar">
+                  <div class="c-month">SEPTIEMBRE 2026</div>
+                  <div class="c-avatar">AG</div>
+                </div>
+                <div class="c-weekdays">
+                  <div class="c-wd">L</div><div class="c-wd">M</div><div class="c-wd">X</div>
+                  <div class="c-wd">J</div><div class="c-wd">V</div><div class="c-wd">S</div><div class="c-wd">D</div>
+                </div>
+                <div class="c-cal">
+                  <div class="c-day"></div>
+                  <div class="c-day active"><div class="c-day-num">1</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">2</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">3</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">4</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">5</div></div>
+                  <div class="c-day active"><div class="c-day-num">6</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">7</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">8</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">9</div><div class="c-pips"><div class="c-pip fat"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">10</div></div>
+                  <div class="c-day active"><div class="c-day-num">11</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">12</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">13</div></div>
+                  <div class="c-day active"><div class="c-day-num">14</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">15</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">16</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">17</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">18</div></div>
+                  <div class="c-day active"><div class="c-day-num">19</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">20</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">21</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">22</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">23</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">24</div></div>
+                  <div class="c-day active"><div class="c-day-num">25</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">26</div><div class="c-pips"><div class="c-pip fat"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">27</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day active"><div class="c-day-num">28</div></div>
+                  <div class="c-day active"><div class="c-day-num">29</div><div class="c-pips"><div class="c-pip fit"></div></div></div>
+                  <div class="c-day today"><div class="c-day-num">30</div><div class="c-pips"><div class="c-pip fit"></div><div class="c-pip gym"></div></div></div>
+                  <div class="c-day"></div><div class="c-day"></div><div class="c-day"></div><div class="c-day"></div><div class="c-day"></div>
+                </div>
+                <div class="c-nav">
+                  <div class="c-nav-item"><div class="c-nav-icon active"></div><div class="c-nav-label active">Inicio</div></div>
+                  <div class="c-nav-item"><div class="c-nav-icon"></div><div class="c-nav-label">Stats</div></div>
+                  <div class="c-nav-item"><div class="c-nav-icon"></div><div class="c-nav-label">Ajustes</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-wrap">
+            <div class="screen-label">Editar día</div>
+            <div class="phone c-phone">
+              <div class="c-modal-screen">
+                <div class="c-modal-sheet">
+                  <div class="c-modal-title">30 SEP <span class="c-modal-close">✕</span></div>
+                  <div>
+                    <div class="c-field-label">Comida</div>
+                    <div class="c-toggle-row">
+                      <div class="c-toggle on">FIT</div>
+                      <div class="c-toggle">FAT</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="c-field-label">Deporte</div>
+                    <div class="c-tag-row">
+                      <div class="c-tag on">Gym</div>
+                      <div class="c-tag on">Correr</div>
+                      <div class="c-tag">Spinning</div>
+                      <div class="c-tag">Padel</div>
+                      <div class="c-tag">Pump</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="c-field-label">Objetivo</div>
+                    <div class="c-toggle-row">
+                      <div class="c-toggle on">Sí</div>
+                      <div class="c-toggle">No</div>
+                    </div>
+                  </div>
+                  <div class="c-save-btn">GUARDAR</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.prototype').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  document.getElementById('proto-' + id).classList.add('active')
+  event.target.classList.add('active')
+}
+</script>
+</body>
+</html>

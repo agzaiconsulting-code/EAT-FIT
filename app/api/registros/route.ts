@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('registros_diarios')
-    .select('id, fecha, comida, gimnasio, objetivo, deportes_dia(id, tipo, kms)')
+    .select('id, fecha, comida, gimnasio, deportes_dia(id, tipo, kms)')
     .eq('usuario_id', userId)
     .gte('fecha', desde)
     .lte('fecha', hasta)
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   if (!session) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
 
   const body = await request.json()
-  const { fecha, comida, gimnasio, objetivo, deportes } = body
+  const { fecha, comida, gimnasio, deportes } = body
 
   if (!fecha || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
     return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
@@ -49,19 +49,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No se pueden editar días pasados' }, { status: 403 })
   }
 
-  const isFuture = fecha > today
   const admin = createAdminClient()
 
-  // For future days, only objetivo is settable
   const registroData: Record<string, unknown> = {
     usuario_id: session.userId,
     fecha,
-    objetivo: Boolean(objetivo),
-  }
-
-  if (!isFuture) {
-    registroData.comida = comida ?? null
-    registroData.gimnasio = Boolean(gimnasio)
+    comida: comida ?? null,
+    gimnasio: Boolean(gimnasio),
   }
 
   const { data: registro, error: upsertError } = await admin
@@ -72,7 +66,7 @@ export async function POST(request: Request) {
 
   if (upsertError) return NextResponse.json({ error: upsertError.message }, { status: 500 })
 
-  if (!isFuture && registro) {
+  if (registro) {
     // Replace deportes
     await admin.from('deportes_dia').delete().eq('registro_id', registro.id)
 

@@ -1,13 +1,13 @@
 'use client'
 
 const MESES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+  'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+  'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',
 ]
 
 interface MonthHeaderProps {
   year: number
-  month: number // 1-12
+  month: number
   onPrev: () => void
   onNext: () => void
   onHoy: () => void
@@ -30,68 +30,90 @@ export default function MonthHeader({
 }: MonthHeaderProps) {
   const isViewingMine = viewingUserId === myUserId
 
-  return (
-    <div className="flex flex-col gap-3 px-1">
-      {/* Month navigation */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onPrev}
-          className="w-10 h-10 rounded-2xl flex items-center justify-center text-clay-text text-lg active:scale-95 transition-transform"
-          style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}
-        >
-          ←
-        </button>
+  const navBtnStyle: React.CSSProperties = {
+    width: 36,
+    height: 36,
+    background: 'var(--c-surface)',
+    border: '1px solid var(--c-border)',
+    color: 'var(--c-text)',
+    fontSize: 16,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 
-        <div className="text-center">
-          <p className="font-bold text-lg text-clay-text leading-tight">
-            {MESES[month - 1]}
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 8px' }}>
+      {/* Month navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <button onClick={onPrev} style={navBtnStyle}>←</button>
+
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', color: 'var(--c-text)' }}>
+            {MESES[month - 1]} {year}
           </p>
-          <p className="text-sm text-clay-gray-dark">{year}</p>
         </div>
 
-        <button
-          onClick={onNext}
-          className="w-10 h-10 rounded-2xl flex items-center justify-center text-clay-text text-lg active:scale-95 transition-transform"
-          style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}
-        >
-          →
-        </button>
+        <button onClick={onNext} style={navBtnStyle}>→</button>
       </div>
 
-      {/* User toggle + Hoy */}
-      <div className="flex items-center gap-2">
+      {/* Hoy + partner toggle */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <button
           onClick={onHoy}
-          className="text-xs px-3 py-1.5 rounded-xl text-clay-text font-medium active:scale-95 transition-transform"
-          style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}
+          style={{
+            fontSize: 11,
+            padding: '4px 10px',
+            background: 'var(--c-surface)',
+            border: '1px solid var(--c-border)',
+            color: 'var(--c-text)',
+            cursor: 'pointer',
+            letterSpacing: '0.05em',
+          }}
         >
-          Hoy
+          HOY
         </button>
 
         {partnerNombre && (
           <div
-            className="flex-1 flex rounded-2xl overflow-hidden"
-            style={{ boxShadow: 'var(--shadow-clay-sm)', background: '#fff' }}
+            style={{
+              flex: 1,
+              display: 'flex',
+              border: '1px solid var(--c-border)',
+              overflow: 'hidden',
+            }}
           >
             <button
               onClick={() => !isViewingMine && onToggleUser()}
-              className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
-                isViewingMine
-                  ? 'bg-clay-yellow text-clay-text rounded-2xl'
-                  : 'text-clay-gray-dark'
-              }`}
+              style={{
+                flex: 1,
+                padding: '5px 0',
+                fontSize: 11,
+                fontWeight: 500,
+                background: isViewingMine ? 'var(--c-accent)' : 'var(--c-surface)',
+                color: 'var(--c-text)',
+                border: 'none',
+                cursor: isViewingMine ? 'default' : 'pointer',
+              }}
             >
-              Yo
+              YO
             </button>
             <button
               onClick={() => isViewingMine && onToggleUser()}
-              className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
-                !isViewingMine
-                  ? 'bg-clay-yellow text-clay-text rounded-2xl'
-                  : 'text-clay-gray-dark'
-              }`}
+              style={{
+                flex: 1,
+                padding: '5px 0',
+                fontSize: 11,
+                fontWeight: 500,
+                background: !isViewingMine ? 'var(--c-accent)' : 'var(--c-surface)',
+                color: 'var(--c-text)',
+                border: 'none',
+                borderLeft: '1px solid var(--c-border)',
+                cursor: !isViewingMine ? 'default' : 'pointer',
+              }}
             >
-              {partnerNombre}
+              {partnerNombre.toUpperCase()}
             </button>
           </div>
         )}
