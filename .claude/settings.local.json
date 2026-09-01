@@ -1,0 +1,13 @@
+{
+  "enabledMcpjsonServers": [
+    "claude_design"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(rm -f \"C:\\\\Users\\\\Adrian\\\\.claude\\\\Claude Code Projects\\\\Eat&Fit\\\\app\\\\\\(auth\\)\\\\signup\\\\page.tsx\")",
+      "Bash(rm -f \"C:\\\\Users\\\\Adrian\\\\.claude\\\\Claude Code Projects\\\\Eat&Fit\\\\app\\\\\\(auth\\)\\\\setup-pin\\\\page.tsx\")",
+      "Bash(rm -f \"C:\\\\Users\\\\Adrian\\\\.claude\\\\Claude Code Projects\\\\Eat&Fit\\\\app\\\\auth\\\\callback\\\\route.ts\")",
+      "Bash(rm -f \"C:\\\\Users\\\\Adrian\\\\.claude\\\\Claude Code Projects\\\\Eat&Fit\\\\app\\\\api\\\\pin\\\\create\\\\route.ts\")"
+    ]
+  }
+}
