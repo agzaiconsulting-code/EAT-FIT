@@ -58,9 +58,9 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 2 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 1 }}>
       {/* Day headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {DIAS.map((d) => (
           <div
             key={d}
@@ -86,7 +86,7 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(7, 1fr)',
-              gap: 2,
+              gap: 1,
               flex: 1,
               ...(golden
                 ? { outline: '1.5px solid #FFB800', outlineOffset: 1 }

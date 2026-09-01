@@ -28,7 +28,7 @@ export default function DayCell({ fecha, record, onClick, isToday, isFuture }: D
       onClick={isFuture ? undefined : onClick}
       style={{
         background: hasData ? 'var(--c-surface)' : 'var(--c-bg)',
-        border: 'none',
+        border: '1px solid #222222',
         outline: isToday ? '1.5px solid var(--c-accent)' : 'none',
         outlineOffset: -1,
         cursor: isFuture ? 'default' : 'pointer',
