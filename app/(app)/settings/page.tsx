@@ -20,6 +20,17 @@ export default function SettingsPage() {
 
     setPushStatus('loading')
 
+    // iOS requiere que la app esté instalada en la pantalla de inicio
+    const isStandalone =
+      ('standalone' in navigator && (navigator as { standalone?: boolean }).standalone === true) ||
+      window.matchMedia('(display-mode: standalone)').matches
+
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !isStandalone) {
+      setPushStatus('idle')
+      alert('En iPhone, primero añade la app a la pantalla de inicio (Safari → Compartir → Añadir a pantalla de inicio) y ábrela desde ahí.')
+      return
+    }
+
     try {
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') {
@@ -29,24 +40,33 @@ export default function SettingsPage() {
 
       const keyRes = await fetch('/api/push/vapid-key')
       const { publicKey } = await keyRes.json()
+      if (!publicKey) throw new Error('VAPID public key no configurada')
 
-      const reg = await navigator.serviceWorker.ready
+      const reg = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Service worker tardó demasiado')), 8000)
+        ),
+      ])
+
       const subscription = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey).buffer as ArrayBuffer,
       })
 
-      await fetch('/api/push/subscribe', {
+      const res = await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(subscription.toJSON()),
       })
 
+      if (!res.ok) throw new Error(`Error al guardar suscripción: ${res.status}`)
+
       setPushStatus('ok')
     } catch (err) {
       console.error('Push subscribe error:', err)
       setPushStatus('idle')
-      alert('No se pudieron activar las notificaciones. Inténtalo de nuevo.')
+      alert(`Error: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
 
