@@ -12,6 +12,7 @@ export type StatsResult = {
   semanasDoradas: number
   rachaFit: number
   totalKms: number
+  totalCervezas: number
   deportesCounts: Record<string, number>
   diasConDatos: number
 }
@@ -36,6 +37,7 @@ export function calcStats(registros: RegistroConDeportes[], mes: string): StatsR
   let diasFat = 0
   let diasDeporte = 0
   let totalKms = 0
+  let totalCervezas = 0
   const deportesCounts: Record<string, number> = {}
 
   for (let d = 1; d <= diasEnMes; d++) {
@@ -46,6 +48,7 @@ export function calcStats(registros: RegistroConDeportes[], mes: string): StatsR
     if (r.comida === 'fit') diasFit++
     if (r.comida === 'fat') diasFat++
     if (r.gimnasio) diasDeporte++
+    totalCervezas += r.cervezas ?? 0
   }
 
   for (const r of registros) {
@@ -121,6 +124,7 @@ export function calcStats(registros: RegistroConDeportes[], mes: string): StatsR
     semanasDoradas,
     rachaFit,
     totalKms,
+    totalCervezas,
     deportesCounts,
     diasConDatos: diasConDatosCount,
   }

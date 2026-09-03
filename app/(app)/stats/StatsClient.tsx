@@ -137,12 +137,13 @@ export default function StatsClient({ myUserId, myNombre, partner }: StatsClient
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {/* 2x2 stat grid */}
+          {/* stat grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <StatCard label="Días Fit" value={stats.diasFit} color="var(--c-fit)" />
             <StatCard label="Días Fat" value={stats.diasFat} color="var(--c-fat)" />
             <StatCard label="Días Deporte" value={stats.diasDeporte} color="var(--c-accent)" />
             <StatCard label="Semanas +" value={stats.semanasDoradas} color="var(--c-gold)" />
+            <StatCard label="Cervezas" value={stats.totalCervezas} color={stats.totalCervezas === 0 ? 'var(--c-fit)' : 'var(--c-fat)'} />
           </div>
 
           {/* Streak */}
