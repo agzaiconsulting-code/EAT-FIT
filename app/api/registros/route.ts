@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('registros_diarios')
-    .select('id, fecha, comida, gimnasio, deportes_dia(id, tipo, kms)')
+    .select('id, fecha, comida, gimnasio, cervezas, deportes_dia(id, tipo, kms)')
     .eq('usuario_id', userId)
     .gte('fecha', desde)
     .lte('fecha', hasta)
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   if (!session) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
 
   const body = await request.json()
-  const { fecha, comida, gimnasio, deportes } = body
+  const { fecha, comida, gimnasio, cervezas, deportes } = body
 
   if (!fecha || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
     return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
@@ -56,6 +56,7 @@ export async function POST(request: Request) {
     fecha,
     comida: comida ?? null,
     gimnasio: Boolean(gimnasio),
+    cervezas: typeof cervezas === 'number' ? Math.max(0, Math.floor(cervezas)) : 0,
   }
 
   const { data: registro, error: upsertError } = await admin

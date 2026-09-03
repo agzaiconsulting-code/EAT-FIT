@@ -9,6 +9,7 @@ import { DayRecord } from '@/lib/dayColor'
 interface Registro extends DayRecord {
   id: string
   fecha: string
+  cervezas: number
   deportes: { tipo: string; kms: number | null }[]
 }
 
@@ -43,6 +44,7 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
       Array.isArray(data)
         ? data.map((r: Registro & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
             ...r,
+            cervezas: r.cervezas ?? 0,
             deportes: r.deportes_dia ?? r.deportes ?? [],
           }))
         : []

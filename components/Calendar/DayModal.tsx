@@ -13,6 +13,7 @@ interface DeporteEntry {
 interface RegistroData {
   comida: 'fit' | 'fat' | null
   gimnasio: boolean
+  cervezas: number
   deportes: { tipo: string; kms: number | null }[]
 }
 
@@ -37,9 +38,11 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
   const [deportesSeleccionados, setDeportes] = useState<DeporteEntry[]>(
     (registro?.deportes ?? []).map((d) => ({ tipo: d.tipo as Deporte, kms: d.kms ?? undefined }))
   )
+  const [cervezas, setCervezas] = useState<number>(registro?.cervezas ?? 0)
   const [saving, setSaving] = useState(false)
 
   const gimnasio = deportesSeleccionados.length > 0
+  const noAlcohol = cervezas === 0
 
   function toggleDeporte(tipo: Deporte) {
     setDeportes((prev) => {
@@ -62,6 +65,7 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
     await onSave(fecha, {
       comida,
       gimnasio,
+      cervezas,
       deportes: deportesSeleccionados.map((d) => ({
         tipo: d.tipo,
         kms: d.kms ?? null,
@@ -138,7 +142,7 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
                     padding: '10px 0',
                     background: comida === 'fit' ? 'var(--c-fit)' : 'var(--c-bg)',
                     border: comida === 'fit' ? '1px solid var(--c-fit)' : '1px solid var(--c-border2)',
-                    color: comida === 'fit' ? '#fff' : 'var(--c-dim)',
+                    color: comida === 'fit' ? '#000' : 'var(--c-dim)',
                     fontSize: 14,
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -220,6 +224,55 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
               )}
             </div>
 
+            {/* Alcohol */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--c-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Alcohol{noAlcohol ? ' ✓' : ''}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <button
+                  onClick={() => setCervezas((n) => Math.max(0, n - 1))}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    background: 'var(--c-bg)',
+                    border: '1px solid var(--c-border2)',
+                    color: 'var(--c-text)',
+                    fontSize: 18,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  −
+                </button>
+                <span style={{ fontSize: 16, fontWeight: 700, color: cervezas > 0 ? 'var(--c-fat)' : 'var(--c-fit)', minWidth: 24, textAlign: 'center' }}>
+                  {cervezas}
+                </span>
+                <button
+                  onClick={() => setCervezas((n) => n + 1)}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    background: 'var(--c-bg)',
+                    border: '1px solid var(--c-border2)',
+                    color: 'var(--c-text)',
+                    fontSize: 18,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  +
+                </button>
+                <span style={{ fontSize: 13, color: 'var(--c-dim)' }}>
+                  {cervezas === 0 ? 'Sin alcohol' : `${cervezas} cerveza${cervezas > 1 ? 's' : ''}`}
+                </span>
+              </div>
+            </div>
+
             {/* Save */}
             <button
               onClick={handleSave}
@@ -277,7 +330,12 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
                 </div>
               </div>
             )}
-            {!registro.comida && !registro.gimnasio && (
+            <p style={{ fontSize: 14, color: (registro.cervezas ?? 0) === 0 ? 'var(--c-fit)' : 'var(--c-fat)' }}>
+              {(registro.cervezas ?? 0) === 0
+                ? '✓ Sin alcohol'
+                : `🍺 ${registro.cervezas} cerveza${registro.cervezas > 1 ? 's' : ''}`}
+            </p>
+            {!registro.comida && !registro.gimnasio && (registro.cervezas ?? 0) === 0 && (
               <p style={{ fontSize: 14, color: 'var(--c-dim)' }}>Sin datos para este día</p>
             )}
           </div>

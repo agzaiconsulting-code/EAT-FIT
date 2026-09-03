@@ -10,12 +10,18 @@ interface DayCellProps {
   isFuture: boolean
 }
 
-// fit + sport → verde | solo uno → naranja | fat sin sport → rojo | sin datos → vacío
 function cellColor(record: DayRecord | null | undefined): string | null {
-  if (!record || (!record.comida && !record.gimnasio)) return null
-  if (record.comida === 'fit' && record.gimnasio) return 'var(--c-fit)'
-  if (record.comida === 'fat' && !record.gimnasio) return 'var(--c-fat)'
-  return 'var(--c-accent)' // solo uno de los dos
+  if (!record) return null
+  const fit = record.comida === 'fit'
+  const sport = record.gimnasio
+  const alcohol = (record.cervezas ?? 0) > 0
+
+  if (!record.comida && !sport && !alcohol) return null
+
+  if (fit && sport && !alcohol) return 'var(--c-fit)'   // verde
+  if (fit && sport && alcohol) return 'var(--c-gold)'   // amarillo
+  if (!fit && !sport && alcohol) return 'var(--c-fat)'  // rojo
+  return 'var(--c-accent)'                               // naranja
 }
 
 export default function DayCell({ fecha, record, onClick, isToday, isFuture }: DayCellProps) {
@@ -27,16 +33,16 @@ export default function DayCell({ fecha, record, onClick, isToday, isFuture }: D
     <button
       onClick={isFuture ? undefined : onClick}
       style={{
-        background: hasData ? 'var(--c-surface)' : 'var(--c-bg)',
+        background: hasData ? color : 'var(--c-bg)',
         border: '1px solid #222222',
-        outline: isToday ? '1.5px solid var(--c-accent)' : 'none',
-        outlineOffset: -1,
+        outline: isToday ? '2px solid var(--c-accent)' : 'none',
+        outlineOffset: isToday ? -2 : undefined,
         cursor: isFuture ? 'default' : 'pointer',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '4px 4px 3px',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        padding: '4px 5px',
         minHeight: '100%',
         width: '100%',
       }}
@@ -44,17 +50,13 @@ export default function DayCell({ fecha, record, onClick, isToday, isFuture }: D
       <span
         style={{
           fontSize: 12,
-          fontWeight: 600,
-          color: hasData ? 'var(--c-text)' : 'var(--c-muted)',
+          fontWeight: 700,
+          color: hasData ? 'rgba(0,0,0,0.75)' : 'var(--c-muted)',
           lineHeight: 1,
-          alignSelf: 'flex-start',
         }}
       >
         {day}
       </span>
-      {color && (
-        <div style={{ width: 6, height: 6, background: color }} />
-      )}
     </button>
   )
 }
