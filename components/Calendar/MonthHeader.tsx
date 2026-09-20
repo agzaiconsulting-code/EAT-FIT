@@ -57,19 +57,19 @@ export default function MonthHeader({
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', gap: 8 }}>
-      {/* Month nav */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 16px' }}>
+      {/* Row 1: month navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button onClick={onPrev} style={navBtn}>‹</button>
-        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text)', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text)', letterSpacing: '-0.01em' }}>
           {MESES[month - 1]}{' '}
           <span style={{ color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>{year}</span>
         </span>
         <button onClick={onNext} style={navBtn}>›</button>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexShrink: 0 }}>
+      {/* Row 2: tabs */}
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
         <button
           onClick={onHoy}
           style={{

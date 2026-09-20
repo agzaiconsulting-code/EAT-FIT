@@ -146,7 +146,7 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
       {/* Calendar area */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {/* Month header */}
-        <div style={{ padding: '2px 0 8px', flexShrink: 0 }}>
+        <div style={{ padding: '4px 0 8px', flexShrink: 0 }}>
           <MonthHeader
             year={year}
             month={month}
