@@ -100,28 +100,48 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
       {/* Top bar */}
       <div
         style={{
-          padding: '12px 16px 8px',
-          borderBottom: '1px solid var(--c-border)',
+          padding: '16px 20px 10px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           flexShrink: 0,
         }}
       >
         <h1
           style={{
-            fontSize: 16,
+            fontSize: 22,
             fontWeight: 800,
-            letterSpacing: '0.08em',
+            letterSpacing: '-0.03em',
             color: 'var(--c-text)',
             margin: 0,
           }}
         >
-          EAT<span style={{ color: 'var(--c-accent)' }}>&</span>FIT
+          eat<span style={{ color: 'var(--c-accent)' }}>&</span>fit
         </h1>
+        <div
+          style={{
+            width: 34,
+            height: 34,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--c-accent-deep, #7C3AED), var(--c-accent))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 13,
+            fontWeight: 700,
+            color: '#fff',
+            border: '2px solid rgba(167,139,250,0.3)',
+            flexShrink: 0,
+          }}
+        >
+          {myNombre.charAt(0).toUpperCase()}
+        </div>
       </div>
 
       {/* Calendar area */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {/* Month header */}
-        <div style={{ padding: '8px 0 4px', flexShrink: 0 }}>
+        <div style={{ padding: '2px 0 8px', flexShrink: 0 }}>
           <MonthHeader
             year={year}
             month={month}

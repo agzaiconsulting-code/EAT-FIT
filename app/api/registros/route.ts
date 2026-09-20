@@ -43,12 +43,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Fecha inválida' }, { status: 400 })
   }
 
-  const today = new Date().toISOString().split('T')[0]
-
-  if (fecha < today) {
-    return NextResponse.json({ error: 'No se pueden editar días pasados' }, { status: 403 })
-  }
-
   const admin = createAdminClient()
 
   const registroData: Record<string, unknown> = {

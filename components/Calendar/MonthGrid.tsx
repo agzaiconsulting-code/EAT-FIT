@@ -58,18 +58,19 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       {/* Day headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', paddingBottom: 4 }}>
         {DIAS.map((d) => (
           <div
             key={d}
             style={{
               textAlign: 'center',
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 600,
-              color: 'var(--c-dim)',
+              color: 'rgba(255,255,255,0.25)',
               padding: '4px 0',
+              letterSpacing: '0.08em',
             }}
           >
             {d}
@@ -86,21 +87,21 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(7, 1fr)',
-              gap: 1,
               flex: 1,
+              borderRadius: 12,
+              padding: '2px',
               ...(golden
-                ? { outline: '1.5px solid #FFB800', outlineOffset: 1 }
+                ? {
+                    background: 'rgba(252,211,77,0.05)',
+                    outline: '1px solid rgba(252,211,77,0.18)',
+                    outlineOffset: 0,
+                  }
                 : {}),
             }}
           >
             {week.map((day, di) => {
               if (!day) {
-                return (
-                  <div
-                    key={di}
-                    style={{ background: 'var(--c-bg)', minHeight: '100%' }}
-                  />
-                )
+                return <div key={di} style={{ aspectRatio: '1' }} />
               }
               const fecha = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
               const isFuture = fecha > today
