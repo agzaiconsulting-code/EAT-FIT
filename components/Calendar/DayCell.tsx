@@ -48,14 +48,14 @@ export default function DayCell({ fecha, record, onClick, isToday, isFuture }: D
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2px',
+        padding: 0,
         width: '100%',
-        aspectRatio: '1',
+        height: '100%',
       }}
     >
       <div
         style={{
-          width: '84%',
+          width: '80%',
           aspectRatio: '1',
           borderRadius: '50%',
           background: isFuture ? 'transparent' : bg,

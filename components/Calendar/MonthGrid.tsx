@@ -87,6 +87,7 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(7, 1fr)',
+              gridTemplateRows: '1fr',
               flex: 1,
               borderRadius: 12,
               padding: '2px',
@@ -101,7 +102,7 @@ export default function MonthGrid({ year, month, registros, onDayClick }: MonthG
           >
             {week.map((day, di) => {
               if (!day) {
-                return <div key={di} style={{ aspectRatio: '1' }} />
+                return <div key={di} />
               }
               const fecha = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
               const isFuture = fecha > today
