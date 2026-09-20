@@ -38,18 +38,23 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
 
   const fetchRegistros = useCallback(async () => {
     setLoading(true)
-    const res = await fetch(`/api/registros?mes=${mes}&userId=${viewingUserId}`)
-    const data = await res.json()
-    setRegistros(
-      Array.isArray(data)
-        ? data.map((r: Registro & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
-            ...r,
-            cervezas: r.cervezas ?? 0,
-            deportes: r.deportes_dia ?? r.deportes ?? [],
-          }))
-        : []
-    )
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/registros?mes=${mes}&userId=${viewingUserId}`)
+      const data = await res.json()
+      setRegistros(
+        Array.isArray(data)
+          ? data.map((r: Registro & { deportes_dia?: { tipo: string; kms: number | null }[] }) => ({
+              ...r,
+              cervezas: r.cervezas ?? 0,
+              deportes: r.deportes_dia ?? r.deportes ?? [],
+            }))
+          : []
+      )
+    } catch {
+      setRegistros([])
+    } finally {
+      setLoading(false)
+    }
   }, [mes, viewingUserId])
 
   useEffect(() => {
@@ -92,7 +97,7 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
   return (
     <div
       style={{
-        height: 'calc(100dvh - 48px)',
+        height: 'calc(100dvh - 56px)',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -134,7 +139,7 @@ export default function CalendarClient({ myUserId, myNombre, partner }: Calendar
             flexShrink: 0,
           }}
         >
-          {myNombre.charAt(0).toUpperCase()}
+          {(myNombre ?? 'U').charAt(0).toUpperCase()}
         </div>
       </div>
 

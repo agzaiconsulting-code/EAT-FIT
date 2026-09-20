@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eat&amp;Fit — Concept A: Aurora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #03040F;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 60px;
+  padding: 48px 24px;
+  flex-wrap: wrap;
+}
+
+.label {
+  position: absolute;
+  top: -36px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.screen-wrap {
+  position: relative;
+  padding-top: 40px;
+}
+
+/* Phone shell */
+.phone {
+  width: 375px;
+  height: 820px;
+  border-radius: 48px;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(130,100,255,0.12),
+    0 50px 100px rgba(0,0,0,0.85),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  background: #09091E;
+}
+
+/* Ambient glows in background */
+.phone-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-1 {
+  position: absolute;
+  top: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(109,40,217,0.18) 0%, transparent 65%);
+  filter: blur(10px);
+}
+.glow-2 {
+  position: absolute;
+  bottom: 100px; left: -60px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 65%);
+  filter: blur(10px);
+}
+.glow-3 {
+  position: absolute;
+  top: 40%; right: -80px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 65%);
+  filter: blur(10px);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Status bar */
+.status {
+  padding: 14px 28px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  flex-shrink: 0;
+}
+.status-icons { display: flex; gap: 5px; align-items: center; }
+.status-icons svg { opacity: 0.5; }
+
+/* Header */
+.header {
+  padding: 4px 24px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+.logo em {
+  font-style: normal;
+  color: #A78BFA;
+}
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED, #A78BFA);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff;
+  border: 2px solid rgba(167,139,250,0.3);
+}
+
+/* Month header */
+.month-header {
+  padding: 0 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.month-nav {
+  display: flex; align-items: center; gap: 12px;
+}
+.month-nav button {
+  width: 30px; height: 30px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.month-name {
+  font-size: 15px; font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.month-year { font-weight: 400; color: rgba(255,255,255,0.45); }
+
+.month-tabs {
+  display: flex; gap: 6px;
+}
+.month-tab {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+}
+.month-tab.active {
+  background: rgba(167,139,250,0.2);
+  border-color: rgba(167,139,250,0.35);
+  color: #C4B5FD;
+}
+.month-tab.inactive {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.35);
+}
+
+/* Calendar grid */
+.calendar {
+  flex: 1;
+  padding: 0 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  padding: 0 2px 8px;
+}
+.wd {
+  text-align: center;
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.weeks { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.week {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  border-radius: 12px;
+  padding: 3px;
+}
+.week.golden {
+  background: rgba(245,158,11,0.07);
+  border: 1px solid rgba(245,158,11,0.18);
+}
+
+.day {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.12s;
+}
+.day.empty { background: transparent; cursor: default; }
+.day.no-data {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.3);
+}
+.day.fit {
+  background: rgba(16,185,129,0.2);
+  color: #34D399;
+  box-shadow: 0 0 12px rgba(16,185,129,0.25);
+}
+.day.fat {
+  background: rgba(239,68,68,0.2);
+  color: #F87171;
+  box-shadow: 0 0 10px rgba(239,68,68,0.2);
+}
+.day.gold {
+  background: rgba(245,158,11,0.2);
+  color: #FCD34D;
+  box-shadow: 0 0 12px rgba(245,158,11,0.25);
+}
+.day.mixed {
+  background: rgba(167,139,250,0.15);
+  color: #C4B5FD;
+  box-shadow: 0 0 10px rgba(167,139,250,0.2);
+}
+.day.today {
+  outline: 2px solid #A78BFA;
+  outline-offset: 2px;
+  color: #fff;
+  background: rgba(167,139,250,0.15);
+}
+.day.future {
+  color: rgba(255,255,255,0.15);
+  background: transparent;
+  cursor: default;
+}
+
+/* Stats strip */
+.stats-strip {
+  padding: 12px 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  flex-shrink: 0;
+}
+.stat-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.stat-label {
+  font-size: 9px; font-weight: 600;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.stat-value {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.stat-value.green { color: #34D399; }
+.stat-value.red { color: #F87171; }
+.stat-value.gold { color: #FCD34D; }
+.stat-sub {
+  font-size: 9px; color: rgba(255,255,255,0.25); font-weight: 500;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  height: 64px;
+  background: rgba(10,8,28,0.8);
+  backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center;
+  padding: 0 20px 8px;
+  flex-shrink: 0;
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.nav-icon {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-label { font-size: 10px; font-weight: 500; }
+.nav-item.active .nav-label { color: #A78BFA; }
+.nav-item.active .nav-icon svg { color: #A78BFA; }
+.nav-item.inactive .nav-label { color: rgba(255,255,255,0.25); }
+.nav-item.inactive .nav-icon svg { color: rgba(255,255,255,0.25); }
+.nav-active-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #A78BFA;
+  position: absolute; bottom: -2px;
+}
+.nav-icon { position: relative; }
+
+/* Streak banner */
+.streak {
+  margin: 0 20px 10px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.05) 100%);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.streak-text { font-size: 12px; font-weight: 600; color: #34D399; }
+.streak-badge {
+  background: rgba(16,185,129,0.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px; font-weight: 700;
+  color: #34D399;
+}
+</style>
+</head>
+<body>
+
+<div class="screen-wrap">
+  <div class="label">Concept A — Aurora Glass</div>
+  <div class="phone">
+    <div class="phone-bg">
+      <div class="glow-1"></div>
+      <div class="glow-2"></div>
+      <div class="glow-3"></div>
+    </div>
+    <div class="content">
+
+      <!-- Status bar -->
+      <div class="status">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <rect x="0" y="3" width="3" height="9" rx="1" fill="currentColor"/>
+            <rect x="4.5" y="2" width="3" height="10" rx="1" fill="currentColor"/>
+            <rect x="9" y="0.5" width="3" height="11.5" rx="1" fill="currentColor"/>
+            <rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="currentColor" opacity="0.3"/>
+          </svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="white" opacity="0.5">
+            <path d="M8 2.5C5.5 2.5 3.3 3.6 1.8 5.3L0.5 4C2.3 2 4.9 0.8 8 0.8s5.7 1.2 7.5 3.2l-1.3 1.3C12.7 3.6 10.5 2.5 8 2.5z"/>
+            <path d="M8 5.5C6.5 5.5 5.2 6.1 4.2 7.1L2.9 5.8C4.2 4.5 6 3.7 8 3.7s3.8.8 5.1 2.1l-1.3 1.3C10.8 6.1 9.5 5.5 8 5.5z"/>
+            <circle cx="8" cy="9.5" r="1.5"/>
+          </svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity="0.35"/>
+            <rect x="2" y="2" width="16" height="8" rx="2" fill="white" opacity="0.5"/>
+            <path d="M23 4v4a2 2 0 000-4z" fill="white" opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="logo">eat<em>&amp;</em>fit</div>
+        <div class="avatar">A</div>
+      </div>
+
+      <!-- Month header -->
+      <div class="month-header">
+        <div class="month-nav">
+          <button>‹</button>
+          <span class="month-name">Sep <span class="month-year">2026</span></span>
+          <button>›</button>
+        </div>
+        <div class="month-tabs">
+          <div class="month-tab active">Yo</div>
+          <div class="month-tab inactive">Ana</div>
+          <div class="month-tab inactive">Hoy</div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="calendar">
+        <div class="weekdays">
+          <div class="wd">L</div><div class="wd">M</div><div class="wd">X</div>
+          <div class="wd">J</div><div class="wd">V</div><div class="wd">S</div><div class="wd">D</div>
+        </div>
+        <div class="weeks">
+          <!-- Week 1: Sep 1-6 (starts Tuesday) -->
+          <div class="week">
+            <div class="day empty"></div>
+            <div class="day mixed">1</div>
+            <div class="day fat">2</div>
+            <div class="day fit">3</div>
+            <div class="day fit">4</div>
+            <div class="day fat">5</div>
+            <div class="day fit">6</div>
+          </div>
+          <!-- Week 2: Sep 7-13 — GOLDEN -->
+          <div class="week golden">
+            <div class="day fit">7</div>
+            <div class="day fit">8</div>
+            <div class="day fit">9</div>
+            <div class="day fit">10</div>
+            <div class="day fit">11</div>
+            <div class="day fat">12</div>
+            <div class="day fit">13</div>
+          </div>
+          <!-- Week 3: Sep 14-20 -->
+          <div class="week">
+            <div class="day fit">14</div>
+            <div class="day fit">15</div>
+            <div class="day fat">16</div>
+            <div class="day fit">17</div>
+            <div class="day gold">18</div>
+            <div class="day fat">19</div>
+            <div class="day today">20</div>
+          </div>
+          <!-- Week 4: Sep 21-27 -->
+          <div class="week">
+            <div class="day future">21</div>
+            <div class="day future">22</div>
+            <div class="day future">23</div>
+            <div class="day future">24</div>
+            <div class="day future">25</div>
+            <div class="day future">26</div>
+            <div class="day future">27</div>
+          </div>
+          <!-- Week 5: Sep 28-30 -->
+          <div class="week">
+            <div class="day future">28</div>
+            <div class="day future">29</div>
+            <div class="day future">30</div>
+            <div class="day empty"></div>
+            <div class="day empty"></div>
+            <div class="day empty"></div>
+            <div class="day empty"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Streak banner -->
+      <div class="streak">
+        <span class="streak-text">🔥 Racha actual</span>
+        <span class="streak-badge">6 días fit</span>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="stat-card">
+          <div class="stat-label">Días Fit</div>
+          <div class="stat-value green">14</div>
+          <div class="stat-sub">este mes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Deporte</div>
+          <div class="stat-value gold">12</div>
+          <div class="stat-sub">sesiones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cervezas</div>
+          <div class="stat-value red">8</div>
+          <div class="stat-sub">este mes</div>
+        </div>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon">
+            <div class="nav-active-dot"></div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+          </div>
+          <span class="nav-label active" style="color:#A78BFA">Inicio</span>
+        </div>
+        <div class="nav-item inactive">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+          </div>
+          <span class="nav-label">Stats</span>
+        </div>
+        <div class="nav-item inactive">
+          <div class="nav-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <span class="nav-label">Ajustes</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal preview -->
+<div class="screen-wrap">
+  <div class="label">Modal — Editar día</div>
+  <div class="phone">
+    <div class="phone-bg">
+      <div class="glow-1"></div>
+    </div>
+    <div class="content" style="position:relative;">
+      <!-- Dimmed background -->
+      <div style="position:absolute;inset:0;background:rgba(3,4,15,0.75);backdrop-filter:blur(4px);z-index:2;border-radius:48px;"></div>
+      <!-- Modal -->
+      <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;background:linear-gradient(160deg,#0F0B28,#0A0818);border:1px solid rgba(167,139,250,0.2);border-bottom:none;border-radius:28px 28px 0 0;padding:24px 20px 32px;display:flex;flex-direction:column;gap:20px;box-shadow:0 -20px 60px rgba(0,0,0,0.6);">
+        <!-- Handle -->
+        <div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto -8px;"></div>
+        <!-- Date title -->
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Sábado</div>
+            <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.02em;">20 Septiembre</div>
+          </div>
+          <button style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+        </div>
+        <!-- Comida -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase;">Comida</div>
+          <div style="display:flex;gap:8px;">
+            <button style="flex:1;padding:12px;border-radius:14px;background:rgba(16,185,129,0.2);border:1.5px solid rgba(16,185,129,0.4);color:#34D399;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">FIT</button>
+            <button style="flex:1;padding:12px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.05em;">FAT</button>
+          </div>
+        </div>
+        <!-- Deporte -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase;">Deporte ✓</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="padding:7px 14px;border-radius:20px;background:rgba(167,139,250,0.18);border:1px solid rgba(167,139,250,0.35);color:#C4B5FD;font-size:12px;font-weight:600;">Gym</span>
+            <span style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">Correr</span>
+            <span style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">Padel</span>
+            <span style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">Spinning</span>
+            <span style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;">BodyPump</span>
+          </div>
+        </div>
+        <!-- Alcohol -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase;">Alcohol ✓</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <button style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">−</button>
+            <span style="font-size:24px;font-weight:800;color:#34D399;min-width:28px;text-align:center;">0</span>
+            <button style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>
+            <span style="font-size:12px;color:rgba(255,255,255,0.3);font-weight:500;">Sin alcohol</span>
+          </div>
+        </div>
+        <!-- Save button -->
+        <button style="width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,#7C3AED,#A78BFA);border:none;color:#fff;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.4);">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Design tokens reference -->
+<div style="position:fixed;bottom:20px;left:20px;background:rgba(9,9,30,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 18px;font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.4);backdrop-filter:blur(10px);">
+  <div style="font-weight:700;color:rgba(255,255,255,0.7);margin-bottom:8px;letter-spacing:0.05em;">CONCEPT A — AURORA GLASS</div>
+  <div style="display:flex;flex-direction:column;gap:4px;">
+    <div>Background: <span style="color:#9b8fcc;">#09091E</span></div>
+    <div>Accent: <span style="color:#A78BFA;">#A78BFA violet</span></div>
+    <div>Fit: <span style="color:#34D399;">#34D399 emerald</span></div>
+    <div>Fat: <span style="color:#F87171;">#F87171 rose</span></div>
+    <div>Gold: <span style="color:#FCD34D;">#FCD34D amber</span></div>
+    <div>Font: <span style="color:#ccc;">Inter 400/700/800</span></div>
+    <div>Radius: <span style="color:#ccc;">50% days · 16px cards</span></div>
+    <div>Effect: <span style="color:#ccc;">Glassmorphism + glow</span></div>
+  </div>
+</div>
+
+</body>
+</html>

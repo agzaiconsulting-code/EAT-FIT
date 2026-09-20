@@ -86,9 +86,7 @@ export default function DayModal({ fecha, registro, readOnly, onClose, onSave }:
         zIndex: 50,
         display: 'flex',
         alignItems: 'flex-end',
-        background: 'rgba(3,4,15,0.7)',
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)',
+        background: 'rgba(3,4,15,0.8)',
       }}
       onClick={onClose}
     >

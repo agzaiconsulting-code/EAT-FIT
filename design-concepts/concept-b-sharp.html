@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eat&amp;Fit — Concept B: Sharp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 60px;
+  padding: 48px 24px;
+  flex-wrap: wrap;
+}
+
+.label {
+  position: absolute;
+  top: -36px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+
+.screen-wrap {
+  position: relative;
+  padding-top: 40px;
+}
+
+/* Phone shell */
+.phone {
+  width: 375px;
+  height: 820px;
+  background: #080808;
+  border-radius: 40px;
+  border: 1px solid #1A1A1A;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status {
+  padding: 14px 24px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  font-family: 'Geist Mono', monospace;
+  flex-shrink: 0;
+}
+
+/* Header */
+.header {
+  padding: 6px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #111;
+  flex-shrink: 0;
+}
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.logo em {
+  font-style: normal;
+  color: #FF5500;
+}
+.header-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.badge {
+  padding: 4px 10px;
+  background: #FF5500;
+  font-size: 10px; font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+.avatar {
+  width: 30px; height: 30px;
+  background: #111;
+  border: 1px solid #222;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6);
+  font-family: 'Geist Mono', monospace;
+}
+
+/* Month nav */
+.month-header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.month-left { display: flex; align-items: center; gap: 14px; }
+.month-btn {
+  width: 28px; height: 28px;
+  background: #111; border: 1px solid #1E1E1E;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.month-name {
+  font-size: 14px; font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Geist Mono', monospace;
+}
+.month-year { color: rgba(255,255,255,0.3); font-weight: 400; }
+.month-tabs { display: flex; gap: 0; border: 1px solid #1E1E1E; }
+.month-tab {
+  padding: 5px 11px;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+  border: none;
+}
+.month-tab.active { background: #FF5500; color: #fff; }
+.month-tab.inactive { background: transparent; color: rgba(255,255,255,0.3); }
+
+/* Calendar */
+.calendar {
+  flex: 1;
+  padding: 0 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.weekdays {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  padding: 0 2px 6px;
+  border-bottom: 1px solid #111;
+  margin-bottom: 6px;
+}
+.wd {
+  text-align: center;
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.12em;
+  font-family: 'Geist Mono', monospace;
+  padding: 4px 0;
+}
+.weeks { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+
+.week {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.week.golden {
+  outline: 1px solid rgba(255,214,0,0.35);
+  outline-offset: 1px;
+}
+
+.day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  font-family: 'Geist Mono', monospace;
+}
+.day.empty { cursor: default; }
+.day.no-data { background: #0F0F0F; color: rgba(255,255,255,0.2); }
+.day.fit { background: #00281A; color: #00E676; }
+.day.fat { background: #280000; color: #FF1744; }
+.day.gold { background: #261E00; color: #FFD600; }
+.day.mixed { background: #1A0A00; color: #FF5500; }
+.day.today {
+  background: #0F0F0F;
+  color: #fff;
+  outline: 2px solid #FF5500;
+  outline-offset: -2px;
+  z-index: 1;
+}
+.day.future { background: transparent; color: rgba(255,255,255,0.1); cursor: default; }
+
+/* Bento stats grid */
+.bento {
+  padding: 8px 12px 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.bento-card {
+  background: #0C0C0C;
+  border: 1px solid #171717;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.bento-card.wide { grid-column: span 2; flex-direction: row; align-items: center; justify-content: space-between; }
+.bento-label {
+  font-size: 9px; font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+.bento-value {
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-family: 'Geist Mono', monospace;
+}
+.bento-value.green { color: #00E676; }
+.bento-value.orange { color: #FF5500; }
+.bento-value.red { color: #FF1744; }
+.bento-value.gold { color: #FFD600; }
+.bento-sub {
+  font-size: 9px; color: rgba(255,255,255,0.2);
+  font-family: 'Geist Mono', monospace;
+  font-weight: 500;
+}
+.streak-text {
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+}
+.streak-val {
+  font-size: 20px; font-weight: 900;
+  color: #00E676;
+  font-family: 'Geist Mono', monospace;
+  letter-spacing: -0.04em;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  height: 58px;
+  background: #060606;
+  border-top: 1px solid #111;
+  display: flex; align-items: center;
+  padding: 0 16px 6px;
+  flex-shrink: 0;
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer;
+}
+.nav-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Geist Mono', monospace; }
+.nav-item.active .nav-label { color: #FF5500; }
+.nav-item.active svg { color: #FF5500; }
+.nav-item.inactive .nav-label { color: rgba(255,255,255,0.2); }
+.nav-item.inactive svg { color: rgba(255,255,255,0.2); }
+.nav-bar {
+  width: 100%; height: 2px; background: #FF5500;
+  margin-bottom: 2px;
+}
+.nav-bar-empty { width: 100%; height: 2px; background: transparent; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<div class="screen-wrap">
+  <div class="label">Concept B — Sharp Grid</div>
+  <div class="phone">
+
+    <!-- Status bar -->
+    <div class="status">
+      <span>09:41</span>
+      <span>▣▣▣ WiFi 🔋</span>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">EAT<em>&amp;</em>FIT</div>
+      <div class="header-right">
+        <div class="badge">Sep 2026</div>
+        <div class="avatar">AG</div>
+      </div>
+    </div>
+
+    <!-- Month header -->
+    <div class="month-header">
+      <div class="month-left">
+        <button class="month-btn">‹</button>
+        <span class="month-name">Septiembre <span class="month-year">'26</span></span>
+        <button class="month-btn">›</button>
+      </div>
+      <div class="month-tabs">
+        <div class="month-tab active">YO</div>
+        <div class="month-tab inactive">ANA</div>
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="calendar">
+      <div class="weekdays">
+        <div class="wd">L</div><div class="wd">M</div><div class="wd">X</div>
+        <div class="wd">J</div><div class="wd">V</div><div class="wd">S</div><div class="wd">D</div>
+      </div>
+      <div class="weeks">
+        <!-- Week 1 -->
+        <div class="week">
+          <div class="day empty"></div>
+          <div class="day mixed">1</div>
+          <div class="day fat">2</div>
+          <div class="day fit">3</div>
+          <div class="day fit">4</div>
+          <div class="day fat">5</div>
+          <div class="day fit">6</div>
+        </div>
+        <!-- Week 2: GOLDEN -->
+        <div class="week golden">
+          <div class="day fit">7</div>
+          <div class="day fit">8</div>
+          <div class="day fit">9</div>
+          <div class="day fit">10</div>
+          <div class="day fit">11</div>
+          <div class="day fat">12</div>
+          <div class="day fit">13</div>
+        </div>
+        <!-- Week 3 -->
+        <div class="week">
+          <div class="day fit">14</div>
+          <div class="day fit">15</div>
+          <div class="day fat">16</div>
+          <div class="day fit">17</div>
+          <div class="day gold">18</div>
+          <div class="day fat">19</div>
+          <div class="day today">20</div>
+        </div>
+        <!-- Week 4 -->
+        <div class="week">
+          <div class="day future">21</div>
+          <div class="day future">22</div>
+          <div class="day future">23</div>
+          <div class="day future">24</div>
+          <div class="day future">25</div>
+          <div class="day future">26</div>
+          <div class="day future">27</div>
+        </div>
+        <!-- Week 5 -->
+        <div class="week">
+          <div class="day future">28</div>
+          <div class="day future">29</div>
+          <div class="day future">30</div>
+          <div class="day empty"></div>
+          <div class="day empty"></div>
+          <div class="day empty"></div>
+          <div class="day empty"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bento stats -->
+    <div class="bento">
+      <div class="bento-card wide">
+        <div>
+          <div class="bento-label">Racha actual</div>
+          <div class="streak-text">días fit consecutivos</div>
+        </div>
+        <div class="streak-val">6</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label">Días Fit</div>
+        <div class="bento-value green">14</div>
+        <div class="bento-sub">/ 20 registrados</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label">Deporte</div>
+        <div class="bento-value orange">12</div>
+        <div class="bento-sub">sesiones</div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <div class="nav-bar"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+          <rect x="3" y="4" width="18" height="18" rx="0"/>
+          <path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        <span class="nav-label">Inicio</span>
+      </div>
+      <div class="nav-item inactive">
+        <div class="nav-bar-empty"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        <span class="nav-label">Stats</span>
+      </div>
+      <div class="nav-item inactive">
+        <div class="nav-bar-empty"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <span class="nav-label">Ajustes</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal preview -->
+<div class="screen-wrap">
+  <div class="label">Modal — Editar día</div>
+  <div class="phone" style="position:relative;">
+    <!-- Dimmed bg -->
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.85);z-index:2;border-radius:40px;"></div>
+    <!-- Modal -->
+    <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;background:#0C0C0C;border-top:2px solid #FF5500;border-left:1px solid #1A1A1A;border-right:1px solid #1A1A1A;padding:24px 20px 32px;display:flex;flex-direction:column;gap:20px;">
+      <!-- Date header -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:9px;font-weight:700;color:#FF5500;letter-spacing:0.15em;text-transform:uppercase;font-family:'Geist Mono',monospace;margin-bottom:4px;">Domingo · 20 Sep 2026</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.04em;">Editar día</div>
+        </div>
+        <button style="width:30px;height:30px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:#141414;"></div>
+
+      <!-- Comida -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:0.15em;text-transform:uppercase;font-family:'Geist Mono',monospace;">Comida</div>
+        <div style="display:flex;gap:6px;">
+          <button style="flex:1;padding:12px;background:#00281A;border:1px solid #00E676;color:#00E676;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;font-family:'Geist Mono',monospace;">FIT</button>
+          <button style="flex:1;padding:12px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.25);font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;font-family:'Geist Mono',monospace;">FAT</button>
+        </div>
+      </div>
+
+      <!-- Deporte -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:0.15em;text-transform:uppercase;font-family:'Geist Mono',monospace;">Deporte ✓</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span style="padding:6px 12px;background:#1A0A00;border:1px solid #FF5500;color:#FF5500;font-size:11px;font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">GYM</span>
+          <span style="padding:6px 12px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.25);font-size:11px;font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">CORRER</span>
+          <span style="padding:6px 12px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.25);font-size:11px;font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">PADEL</span>
+          <span style="padding:6px 12px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.25);font-size:11px;font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">SPINNING</span>
+          <span style="padding:6px 12px;background:#111;border:1px solid #1E1E1E;color:rgba(255,255,255,0.25);font-size:11px;font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">BODYPUMP</span>
+        </div>
+      </div>
+
+      <!-- Alcohol -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:0.15em;text-transform:uppercase;font-family:'Geist Mono',monospace;">Alcohol ✓</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button style="width:36px;height:36px;background:#111;border:1px solid #1E1E1E;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+          <span style="font-size:28px;font-weight:900;color:#00E676;min-width:32px;text-align:center;font-family:'Geist Mono',monospace;letter-spacing:-0.04em;">0</span>
+          <button style="width:36px;height:36px;background:#111;border:1px solid #1E1E1E;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+          <span style="font-size:11px;color:rgba(255,255,255,0.25);font-weight:700;font-family:'Geist Mono',monospace;letter-spacing:0.04em;">SIN ALCOHOL</span>
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <button style="width:100%;padding:14px;background:#FF5500;border:none;color:#fff;font-size:13px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-family:'Geist Mono',monospace;">GUARDAR DÍA</button>
+    </div>
+  </div>
+</div>
+
+<!-- Design tokens reference -->
+<div style="position:fixed;bottom:20px;left:20px;background:#0A0A0A;border:1px solid #1A1A1A;border-top:2px solid #FF5500;padding:14px 18px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35);">
+  <div style="font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:8px;letter-spacing:0.08em;">CONCEPT B — SHARP GRID</div>
+  <div style="display:flex;flex-direction:column;gap:4px;">
+    <div>Background: <span style="color:#888;">#080808 black</span></div>
+    <div>Accent: <span style="color:#FF5500;">#FF5500 orange</span></div>
+    <div>Fit: <span style="color:#00E676;">#00E676 neon green</span></div>
+    <div>Fat: <span style="color:#FF1744;">#FF1744 red</span></div>
+    <div>Gold: <span style="color:#FFD600;">#FFD600 yellow</span></div>
+    <div>Font: <span style="color:#ccc;">Geist + Geist Mono</span></div>
+    <div>Radius: <span style="color:#ccc;">0px — geometric</span></div>
+    <div>Effect: <span style="color:#ccc;">Flat + bento grid</span></div>
+  </div>
+</div>
+
+</body>
+</html>
